@@ -1009,27 +1009,8 @@
 
     <!-- ══ ASISTENTE IA ══ -->
     <div class="view view-fill" id="view-assistant">
-      <!-- Setup screen (shown when no API key) -->
-      <div class="chat-setup" id="chat-setup">
-        <div class="chat-setup-card">
-          <div class="chat-setup-title">Asistente IA NutrIA</div>
-          <p class="chat-setup-desc">
-            El asistente usa la API de Claude (Anthropic) para generar planes de dieta personalizados, responder preguntas nutricionales y darte consejos basados en tu perfil y la base de datos de alimentos.
-            <br><br>
-            Introduce tu API key de Anthropic para continuar. Se guardará solo en tu navegador.
-          </p>
-          <input type="password" class="chat-key-input" id="chat-api-key-input"
-            placeholder="sk-ant-api03-…"
-            onkeydown="if(event.key==='Enter')saveApiKey()"/>
-          <button class="btn btn-primary" style="width:100%" onclick="saveApiKey()">Guardar y comenzar</button>
-          <p style="font-size:.72rem;color:var(--muted);margin-top:12px;text-align:center;line-height:1.5">
-            Obtén tu API key en <strong style="color:var(--text)">console.anthropic.com</strong>.<br>
-            El coste por conversación es muy bajo (~$0.001).
-          </p>
-        </div>
-      </div>
       <!-- Chat interface -->
-      <div class="chat-container" id="chat-container" style="display:none">
+      <div class="chat-container" id="chat-container">
         <div class="chat-messages" id="chat-messages"></div>
         <div class="chat-suggestions" id="chat-suggestions">
           <button class="chat-suggestion" onclick="sendSuggestion(this)">Genera un plan semanal para mi perfil</button>
@@ -1048,8 +1029,6 @@
         </div>
         <div style="text-align:center;padding:6px 0 10px">
           <button onclick="clearChat()" style="font-size:.7rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Nueva conversación</button>
-          <span style="color:var(--border-md);margin:0 8px">·</span>
-          <button onclick="removeApiKey()" style="font-size:.7rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Cambiar API key</button>
         </div>
       </div>
     </div>
@@ -2143,27 +2122,11 @@ renderFoods();
 ═══════════════════════════════════════ */
 let chatHistory = [];
 let chatBusy = false;
+// Cambia esta URL por la de tu proyecto en Vercel una vez desplegado
+const PROXY_URL = 'https://TU-PROYECTO.vercel.app/api/chat';
 
 function initAssistant(){
-  const key = localStorage.getItem('fd_api_key');
-  document.getElementById('chat-setup').style.display = key ? 'none' : 'flex';
-  document.getElementById('chat-container').style.display = key ? 'flex' : 'none';
-  document.getElementById('chat-container').style.flexDirection = 'column';
-  if(key && chatHistory.length === 0) addWelcomeMsg();
-}
-
-function saveApiKey(){
-  const val = document.getElementById('chat-api-key-input').value.trim();
-  if(!val.startsWith('sk-ant-')){ showToast('API key inválida'); return; }
-  localStorage.setItem('fd_api_key', val);
-  initAssistant();
-}
-
-function removeApiKey(){
-  localStorage.removeItem('fd_api_key');
-  chatHistory = [];
-  document.getElementById('chat-messages').innerHTML = '';
-  initAssistant();
+  if(chatHistory.length === 0) addWelcomeMsg();
 }
 
 function clearChat(){
@@ -2337,8 +2300,6 @@ async function sendSuggestion(btn){
 
 async function doSend(text){
   if(chatBusy) return;
-  const key = localStorage.getItem('fd_api_key');
-  if(!key){ showToast('Configura tu API key primero'); return; }
 
   chatBusy = true;
   document.getElementById('chat-send').disabled = true;
@@ -2348,14 +2309,9 @@ async function doSend(text){
   addThinkingMsg();
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(PROXY_URL, {
       method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        'x-api-key': key,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 2048,
@@ -2369,12 +2325,7 @@ async function doSend(text){
 
     if(!res.ok){
       const errMsg = data?.error?.message || `Error ${res.status}`;
-      if(res.status === 401) {
-        showToast('API key inválida');
-        removeApiKey();
-      } else {
-        addChatMsg('assistant', `Lo siento, ha ocurrido un error: ${errMsg}`);
-      }
+      addChatMsg('assistant', `Lo siento, ha ocurrido un error: ${errMsg}`);
       chatHistory.pop();
     } else {
       const reply = data.content?.[0]?.text || '';
