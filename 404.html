@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 — Página no encontrada · FlowDesk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <!-- GitHub Pages SPA redirect -->
+  <script>
+    const path = window.location.pathname.replace('/FlowDesk','') || '/';
+    if (path !== '/404.html') {
+      sessionStorage.setItem('fd-redirect', path);
+      window.location.replace('/FlowDesk/');
+    }
+  </script>
+  <style>
+    :root {
+      --primary: #6C63FF;
+      --secondary: #FF6584;
+      --dark: #1A1A2E;
+      --surface: #16213E;
+      --text: #E0E0E0;
+      --muted: #8892B0;
+      --grad: linear-gradient(135deg, var(--primary), var(--secondary));
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+    .hero-bg {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .content { position: relative; max-width: 480px; }
+    .code {
+      font-size: clamp(5rem, 20vw, 8rem);
+      font-weight: 800;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+    h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 12px; }
+    p  { color: var(--muted); margin-bottom: 32px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: 8px;
+      background: var(--grad); color: #fff;
+      font-weight: 600; font-size: .95rem;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(108,99,255,.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(108,99,255,.5); }
+  </style>
+</head>
+<body>
+  <div class="hero-bg"></div>
+  <div class="content">
+    <div class="code">404</div>
+    <h1>Página no encontrada</h1>
+    <p>La página que buscas no existe o fue movida.<br>Volvamos al inicio.</p>
+    <a href="/FlowDesk/" class="btn">Volver al inicio</a>
+  </div>
+</body>
+</html>

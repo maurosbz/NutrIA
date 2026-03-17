@@ -1,8 +1,11 @@
-const CACHE = 'flowdesk-v1';
+/* FlowDesk Service Worker — compatible con GitHub Pages (/FlowDesk/) */
+const CACHE = 'flowdesk-v2';
+const BASE  = self.registration.scope; // resuelve automáticamente la base URL
+
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  BASE,
+  BASE + 'index.html',
+  BASE + 'manifest.json',
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap'
 ];
 
@@ -22,18 +25,18 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
+/* Estrategia: Network first, fallback a cache */
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   e.respondWith(
-    caches.match(e.request).then(cached => {
-      const network = fetch(e.request).then(res => {
+    fetch(e.request)
+      .then(res => {
         if (res.ok) {
           const clone = res.clone();
           caches.open(CACHE).then(cache => cache.put(e.request, clone));
         }
         return res;
-      });
-      return cached || network;
-    })
+      })
+      .catch(() => caches.match(e.request))
   );
 });

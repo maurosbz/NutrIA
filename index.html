@@ -8,14 +8,14 @@
   <!-- ── SEO / OG TAGS ── -->
   <meta name="description" content="FlowDesk centraliza tareas, comunicación y métricas para equipos remotos. Más foco, menos reuniones. Gratis para siempre." />
   <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://flowdesk.app/" />
+  <meta property="og:url"         content="https://maurosbz.github.io/FlowDesk/" />
   <meta property="og:title"       content="FlowDesk — Gestión de equipos remotos sin fricción" />
   <meta property="og:description" content="12,000+ equipos ya fluyen con FlowDesk. Empieza gratis, sin tarjeta de crédito." />
-  <meta property="og:image"       content="https://flowdesk.app/og-image.png" />
+  <meta property="og:image"       content="https://maurosbz.github.io/FlowDesk/og-image.png" />
   <meta name="twitter:card"       content="summary_large_image" />
   <meta name="twitter:title"      content="FlowDesk — Gestión de equipos remotos" />
   <meta name="twitter:description"content="Centraliza tareas, comunicación y métricas en un solo lugar." />
-  <meta name="twitter:image"      content="https://flowdesk.app/og-image.png" />
+  <meta name="twitter:image"      content="https://maurosbz.github.io/FlowDesk/og-image.png" />
   <meta name="theme-color"        content="#6C63FF" />
 
   <!-- ── PWA ── -->
@@ -126,61 +126,23 @@
     .reveal-delay-4 { transition-delay: .4s; }
     .reveal-delay-5 { transition-delay: .5s; }
 
-    /* ══════════════════════════════════
-       URGENCY BANNER
-    ══════════════════════════════════ */
-    #urgency-banner {
-      background: var(--grad);
-      color: #fff;
-      text-align: center;
-      padding: 10px 48px;
-      font-size: .82rem;
-      font-weight: 600;
-      position: relative;
-      z-index: 1001;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    #urgency-banner.hidden { display: none; }
-    .banner-countdown {
-      display: inline-flex;
-      gap: 6px;
-      align-items: center;
-      background: rgba(0,0,0,.2);
-      border-radius: 6px;
-      padding: 3px 10px;
-      font-variant-numeric: tabular-nums;
-      letter-spacing: .03em;
-    }
-    .countdown-sep { opacity: .7; }
-    .banner-close {
-      position: absolute;
-      right: 14px;
-      top: 50%; transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: rgba(255,255,255,.7);
-      font-size: 1.1rem;
-      cursor: pointer;
-      line-height: 1;
-      padding: 4px 8px;
-      transition: color .2s;
-    }
-    .banner-close:hover { color: #fff; }
 
     /* ══════════════════════════════════
        UTILITIES
     ══════════════════════════════════ */
     .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
     .section    { padding: 96px 0; }
+    /* Sofia: "Cómo funciona" usa surface2 en dark para no romper el ritmo */
     .section-light {
+      background: var(--surface2);
+      color: var(--text);
+    }
+    [data-theme="light"] .section-light {
       background: var(--section-alt-bg);
       color: var(--section-alt-text);
     }
-    .section-light .muted { color: var(--section-alt-muted); }
+    .section-light .muted { color: var(--muted); }
+    [data-theme="light"] .section-light .muted { color: var(--section-alt-muted); }
     .badge {
       display: inline-block;
       background: rgba(108,99,255,.15);
@@ -304,11 +266,12 @@
     /* ══════════════════════════════════
        HERO
     ══════════════════════════════════ */
+    /* Carmen: nav es sticky ahora, padding-top: 0 */
     #hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding-top: 40px;
+      padding-top: 0;
       position: relative;
       overflow: hidden;
     }
@@ -595,9 +558,11 @@
     .logo-item {
       font-size: 1.1rem; font-weight: 700;
       color: rgba(255,255,255,.2); letter-spacing: .05em;
-      transition: color .25s;
+      transition: color .25s, letter-spacing .3s;
+      cursor: default;
     }
-    .logo-item:hover { color: rgba(255,255,255,.5); }
+    /* Sofia: hover más pronunciado con color y tracking */
+    .logo-item:hover { color: var(--primary); letter-spacing: .12em; }
 
     /* ══════════════════════════════════
        FEATURES
@@ -929,9 +894,23 @@
     /* ══════════════════════════════════
        RESPONSIVE
     ══════════════════════════════════ */
+    /* Marco: nav-open como clase CSS para que respete variables de tema */
     @media (max-width: 900px) {
-      .nav-links, .nav-cta .btn-outline { display: none; }
+      .nav-links { display: none; }
+      .nav-cta .btn-outline { display: none; }
       .hamburger { display: flex; }
+      .nav-links.nav-open {
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 57px; left: 0; right: 0;
+        background: var(--nav-bg);
+        backdrop-filter: blur(14px);
+        padding: 24px;
+        gap: 20px;
+        border-bottom: 1px solid var(--border);
+        z-index: 999;
+      }
       .hero-grid { grid-template-columns: 1fr; }
       .hero-visual { display: none; }
       #features .grid-3,
@@ -949,26 +928,18 @@
       .section { padding: 64px 0; }
       .email-form { flex-direction: column; }
       .cta-box { padding: 40px 20px; }
+      /* Sofia: hero H1 más legible en mobile */
+      .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
       .hero-stats { flex-direction: column; gap: 16px; }
       .footer-grid { grid-template-columns: 1fr; }
       .chat-panel { width: 260px; }
+      /* Marco: chat no tapa el CTA en mobile */
+      .chat-widget { bottom: 80px; right: 16px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ══ URGENCY BANNER ═══════════════════════════════════ -->
-<div id="urgency-banner">
-  <span>Oferta limitada: <strong>3 meses de Pro gratis</strong> — termina en</span>
-  <span class="banner-countdown">
-    <span id="cd-days">00</span><span class="countdown-sep">d</span>
-    <span id="cd-hours">00</span><span class="countdown-sep">h</span>
-    <span id="cd-mins">00</span><span class="countdown-sep">m</span>
-    <span id="cd-secs">00</span><span class="countdown-sep">s</span>
-  </span>
-  <a href="#cta-final" style="color:#fff;text-decoration:underline;font-weight:700">Reclamar ahora</a>
-  <button class="banner-close" onclick="dismissBanner()" aria-label="Cerrar">✕</button>
-</div>
 
 <!-- ══ NAVBAR ══════════════════════════════════════════ -->
 <nav>
@@ -1493,30 +1464,6 @@
     themeToggle.textContent = next === 'dark' ? '🌙' : '☀️';
   });
 
-  /* ══════════════════════════════════
-     2. URGENCY BANNER + COUNTDOWN
-  ══════════════════════════════════ */
-  function dismissBanner() {
-    document.getElementById('urgency-banner').classList.add('hidden');
-    sessionStorage.setItem('fd-banner-dismissed', '1');
-  }
-  if (sessionStorage.getItem('fd-banner-dismissed')) dismissBanner();
-
-  const deadline = new Date('2026-03-31T23:59:59');
-  function updateCountdown() {
-    const diff = deadline - Date.now();
-    if (diff <= 0) { document.getElementById('urgency-banner').classList.add('hidden'); return; }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000)  / 60000);
-    const s = Math.floor((diff % 60000)    / 1000);
-    document.getElementById('cd-days').textContent  = String(d).padStart(2,'0');
-    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
-    document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
-  }
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
 
   /* ══════════════════════════════════
      3. SCROLL REVEAL (IntersectionObserver)
@@ -1584,18 +1531,36 @@
   /* ══════════════════════════════════
      6. DEMO MODAL
   ══════════════════════════════════ */
+  /* ── Carmen: focus-trap accesible en el modal ── */
+  const demoModal = document.getElementById('demo-modal');
+  const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+  function trapFocus(e) {
+    const focusables = [...demoModal.querySelectorAll(FOCUSABLE)].filter(el => !el.disabled);
+    const first = focusables[0];
+    const last  = focusables[focusables.length - 1];
+    if (e.key === 'Tab') {
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+    if (e.key === 'Escape') closeDemo();
+  }
+
   function openDemo() {
-    document.getElementById('demo-modal').classList.add('open');
+    demoModal.classList.add('open');
     document.body.style.overflow = 'hidden';
+    const firstFocusable = demoModal.querySelector(FOCUSABLE);
+    if (firstFocusable) firstFocusable.focus();
+    demoModal.addEventListener('keydown', trapFocus);
   }
   function closeDemo() {
-    document.getElementById('demo-modal').classList.remove('open');
+    demoModal.classList.remove('open');
     document.body.style.overflow = '';
+    demoModal.removeEventListener('keydown', trapFocus);
   }
-  document.getElementById('demo-modal').addEventListener('click', e => {
-    if (e.target === e.currentTarget) closeDemo();
+  demoModal.addEventListener('click', e => {
+    if (e.target === demoModal) closeDemo();
   });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDemo(); });
 
   function switchTab(btn, tabId) {
     btn.closest('.demo-screen').querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
@@ -1678,14 +1643,10 @@
   sections.forEach(s => navObserver.observe(s));
 
   /* ══════════════════════════════════
-     10. HAMBURGER
+     10. HAMBURGER — Marco: clase CSS, respeta tema
   ══════════════════════════════════ */
   document.querySelector('.hamburger').addEventListener('click', function () {
-    const links = document.querySelector('.nav-links');
-    const isOpen = links.style.display === 'flex';
-    links.style.cssText = isOpen
-      ? ''
-      : 'display:flex;flex-direction:column;position:fixed;top:56px;left:0;right:0;background:var(--nav-bg);backdrop-filter:blur(14px);padding:24px;gap:20px;border-bottom:1px solid var(--border);z-index:999';
+    document.querySelector('.nav-links').classList.toggle('nav-open');
   });
 
   /* ══════════════════════════════════
