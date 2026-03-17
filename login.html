@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NutrIA — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #080808;
+      --surface:   #111111;
+      --surface2:  #181818;
+      --surface3:  #242424;
+      --text:      #efefef;
+      --muted:     #6b6b6b;
+      --border:    rgba(255,255,255,.06);
+      --border-md: rgba(255,255,255,.10);
+      --radius-xl: 22px;
+      --shadow-lg: 0 2px 8px rgba(0,0,0,.7), 0 28px 72px rgba(0,0,0,.5);
+      --grad:      linear-gradient(135deg,#ffffff,#888);
+      --done:      #4f9e4f;
+      --blocked:   #c05050;
+    }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    html,body { min-height:100% }
+    body {
+      font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; padding:24px;
+      -webkit-font-smoothing:antialiased; min-height:100vh;
+    }
+    a { text-decoration:none; color:inherit }
+    button { font-family:inherit; cursor:pointer; border:none }
+
+    .auth-logo {
+      font-size:1.4rem; font-weight:700; letter-spacing:-.03em;
+      background:var(--grad); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text;
+      display:block; text-align:center; margin-bottom:32px;
+    }
+    .auth-card {
+      width:100%; max-width:400px;
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:var(--radius-xl); padding:28px;
+      box-shadow:var(--shadow-lg);
+    }
+    /* Tabs */
+    .auth-tabs {
+      display:flex; background:var(--surface2);
+      border-radius:10px; padding:4px; margin-bottom:24px; gap:4px;
+    }
+    .auth-tab {
+      flex:1; padding:9px; border-radius:8px; text-align:center;
+      font-size:.85rem; font-weight:600; color:var(--muted);
+      cursor:pointer; transition:all .2s; background:none;
+    }
+    .auth-tab.active { background:var(--surface3); color:var(--text) }
+
+    /* Forms */
+    .auth-form { display:none }
+    .auth-form.active { display:block }
+
+    .field { margin-bottom:16px }
+    .field label {
+      display:block; font-size:.69rem; font-weight:600; color:var(--muted);
+      margin-bottom:7px; text-transform:uppercase; letter-spacing:.07em;
+    }
+    .field input {
+      width:100%; background:var(--surface2);
+      border:1px solid var(--border-md); border-radius:10px;
+      padding:12px 14px; color:var(--text);
+      font-family:inherit; font-size:.9rem; outline:none;
+      transition:border-color .15s, box-shadow .15s;
+    }
+    .field input:focus {
+      border-color:var(--text);
+      box-shadow:0 0 0 3px rgba(255,255,255,.04);
+    }
+    .field input::placeholder { color:var(--muted) }
+
+    .btn-submit {
+      width:100%; padding:13px; border-radius:10px;
+      background:var(--text); color:var(--bg);
+      font-weight:700; font-size:.9rem;
+      cursor:pointer; transition:opacity .15s;
+      font-family:inherit; margin-top:4px;
+    }
+    .btn-submit:hover { opacity:.85 }
+
+    .plan-pill {
+      display:inline-flex; align-items:center; gap:7px;
+      background:var(--surface2); border:1px solid var(--border-md);
+      border-radius:20px; padding:6px 14px;
+      font-size:.75rem; color:var(--muted); margin-bottom:20px;
+    }
+    .plan-dot { width:6px; height:6px; border-radius:50%; background:var(--done); flex-shrink:0 }
+
+    .error-msg {
+      background:rgba(192,80,80,.1); border:1px solid rgba(192,80,80,.2);
+      border-radius:8px; padding:10px 14px;
+      font-size:.8rem; color:#d07070; margin-bottom:16px; display:none;
+    }
+    .auth-note {
+      text-align:center; font-size:.76rem; color:var(--muted);
+      margin-top:16px; line-height:1.6;
+    }
+    .auth-note a { color:var(--text) }
+    .auth-note a:hover { text-decoration:underline }
+
+    .back-link {
+      display:block; text-align:center; margin-top:22px;
+      font-size:.8rem; color:var(--muted); transition:color .15s;
+    }
+    .back-link:hover { color:var(--text) }
+
+    .divider { height:1px; background:var(--border); margin:18px 0 }
+  </style>
+</head>
+<body>
+
+<a href="index.html" class="auth-logo">NutrIA</a>
+
+<div class="auth-card">
+  <div class="auth-tabs">
+    <button class="auth-tab active" data-tab="login">Iniciar sesión</button>
+    <button class="auth-tab" data-tab="register">Crear cuenta</button>
+  </div>
+
+  <!-- ── LOGIN ── -->
+  <form class="auth-form active" id="form-login" onsubmit="doLogin(event)">
+    <div class="error-msg" id="err-login"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="tu@empresa.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button type="submit" class="btn-submit">Entrar</button>
+    <p class="auth-note">
+      ¿Sin cuenta? <a href="#" onclick="switchTab('register');return false">Créala gratis</a>
+    </p>
+  </form>
+
+  <!-- ── REGISTER ── -->
+  <form class="auth-form" id="form-register" onsubmit="doRegister(event)">
+    <div class="plan-pill">
+      <div class="plan-dot"></div>
+      Plan Gratis — sin tarjeta de crédito
+    </div>
+    <div class="error-msg" id="err-register"></div>
+    <div class="field">
+      <label>Nombre completo</label>
+      <input type="text" id="reg-name" placeholder="Ana García" autocomplete="name"/>
+    </div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="reg-email" placeholder="tu@empresa.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password"/>
+    </div>
+    <button type="submit" class="btn-submit">Crear cuenta gratis</button>
+    <p class="auth-note">
+      Al registrarte aceptas nuestros <a href="#">Términos</a> y <a href="#">Privacidad</a>
+    </p>
+  </form>
+</div>
+
+<a href="index.html" class="back-link">← Volver al inicio</a>
+
+<script>
+// Already logged in → go straight to app
+if(localStorage.getItem('fd_session')) window.location.replace('app.html');
+
+// URL param: ?m=register opens register tab
+if(new URLSearchParams(location.search).get('m') === 'register') switchTab('register');
+
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  document.querySelectorAll('.auth-form').forEach(f=>f.classList.toggle('active', f.id===`form-${tab}`));
+}
+document.querySelectorAll('.auth-tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>switchTab(btn.dataset.tab));
+});
+
+function showErr(id, msg){ const e=document.getElementById(id); e.textContent=msg; e.style.display='block' }
+function hideErr(id){ document.getElementById(id).style.display='none' }
+
+const USERS_KEY = 'fd_users';
+function loadUsers(){ try{ return JSON.parse(localStorage.getItem(USERS_KEY))||[] }catch{ return [] } }
+function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)) }
+
+function startSession(user){
+  localStorage.setItem('fd_session', JSON.stringify({
+    id: user.id, name: user.name, email: user.email,
+    plan: user.plan||'free', createdAt: user.createdAt
+  }));
+  window.location.href = 'app.html';
+}
+
+function doLogin(e){
+  e.preventDefault();
+  hideErr('err-login');
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  if(!email||!pass){ showErr('err-login','Completa todos los campos'); return }
+  const user = loadUsers().find(u=>u.email.toLowerCase()===email.toLowerCase()&&u.password===pass);
+  if(!user){ showErr('err-login','Email o contraseña incorrectos'); return }
+  startSession(user);
+}
+
+function doRegister(e){
+  e.preventDefault();
+  hideErr('err-register');
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  if(!name||!email||!pass){ showErr('err-register','Completa todos los campos'); return }
+  if(pass.length<6){ showErr('err-register','La contraseña debe tener al menos 6 caracteres'); return }
+  const users = loadUsers();
+  if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())){
+    showErr('err-register','Ya existe una cuenta con ese email'); return
+  }
+  const user = {
+    id: 'u_'+Math.random().toString(36).slice(2,10),
+    name, email, password: pass, plan:'free',
+    createdAt: new Date().toISOString()
+  };
+  users.push(user);
+  saveUsers(users);
+  startSession(user);
+}
+</script>
+</body>
+</html>

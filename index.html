@@ -1,1678 +1,664 @@
 <!DOCTYPE html>
 <html lang="es" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FlowDesk — Gestión de equipos remotos sin fricción</title>
-
-  <!-- ── SEO / OG TAGS ── -->
-  <meta name="description" content="FlowDesk centraliza tareas, comunicación y métricas para equipos remotos. Más foco, menos reuniones. Gratis para siempre." />
-  <meta property="og:type"        content="website" />
-  <meta property="og:url"         content="https://maurosbz.github.io/FlowDesk/" />
-  <meta property="og:title"       content="FlowDesk — Gestión de equipos remotos sin fricción" />
-  <meta property="og:description" content="12,000+ equipos ya fluyen con FlowDesk. Empieza gratis, sin tarjeta de crédito." />
-  <meta property="og:image"       content="https://maurosbz.github.io/FlowDesk/og-image.png" />
-  <meta name="twitter:card"       content="summary_large_image" />
-  <meta name="twitter:title"      content="FlowDesk — Gestión de equipos remotos" />
-  <meta name="twitter:description"content="Centraliza tareas, comunicación y métricas en un solo lugar." />
-  <meta name="twitter:image"      content="https://maurosbz.github.io/FlowDesk/og-image.png" />
-  <meta name="theme-color"        content="#e0e0e0" />
-
-  <!-- ── PWA ── -->
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-
-  <!-- ── FONTS ── -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NutrIA — Tu nutricionista personal con IA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
   <style>
-    /* ══════════════════════════════════
-       DESIGN TOKENS — DARK (default) — GRAYSCALE
-    ══════════════════════════════════ */
     :root {
-      --primary:    #f0f0f0;
-      --secondary:  #9ca3af;
-      --dark:       #080808;
-      --surface:    #111111;
-      --surface2:   #1a1a1a;
-      --light:      #f5f5f5;
-      --text:       #e5e5e5;
-      --muted:      #737373;
-      --white:      #ffffff;
-      --border:     rgba(255,255,255,.09);
-      --grad: linear-gradient(135deg, #ffffff 0%, #888888 100%);
-      --radius: 12px;
-      --shadow: 0 8px 40px rgba(0,0,0,.6);
-      --nav-bg: rgba(8,8,8,.88);
-      --card-bg: var(--surface);
-      --section-alt-bg: var(--surface2);
-      --section-alt-text: var(--text);
-      --section-alt-muted: var(--muted);
-      --input-bg: rgba(255,255,255,.05);
-      --input-border: rgba(255,255,255,.1);
+      --bg:        #080808;
+      --surface:   #111111;
+      --surface2:  #181818;
+      --surface3:  #242424;
+      --text:      #efefef;
+      --muted:     #6b6b6b;
+      --border:    rgba(255,255,255,.06);
+      --border-md: rgba(255,255,255,.10);
+      --radius-xl: 22px;
+      --shadow-lg: 0 2px 8px rgba(0,0,0,.7), 0 28px 72px rgba(0,0,0,.5);
+      --grad:      linear-gradient(135deg,#ffffff,#888);
+      --protein:   #4d9de0;
+      --carbs:     #e8a838;
+      --fat:       #e8687a;
+      --kcal:      #52b788;
     }
-
-    /* ── LIGHT MODE ── */
-    [data-theme="light"] {
-      --primary:    #111111;
-      --secondary:  #555555;
-      --dark:       #f8f8f8;
-      --surface:    #ffffff;
-      --surface2:   #f0f0f0;
-      --text:       #111111;
-      --muted:      #666666;
-      --white:      #000000;
-      --border:     rgba(0,0,0,.08);
-      --grad: linear-gradient(135deg, #111111 0%, #666666 100%);
-      --nav-bg:     rgba(248,248,248,.92);
-      --card-bg:    #ffffff;
-      --section-alt-bg:   #f0f0f0;
-      --section-alt-text: #111111;
-      --section-alt-muted:#666666;
-      --input-bg:    rgba(0,0,0,.04);
-      --input-border: rgba(0,0,0,.12);
-      --shadow: 0 8px 40px rgba(0,0,0,.1);
-    }
-    [data-theme="light"] .logo-item { color: rgba(0,0,0,.2); }
-    [data-theme="light"] .logo-item:hover { color: var(--primary); letter-spacing: .12em; }
-    [data-theme="light"] .mockup { box-shadow: 0 24px 80px rgba(0,0,0,.1); }
-    [data-theme="light"] .btn-outline { border-color: rgba(0,0,0,.15); color: var(--text); }
-    [data-theme="light"] .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    [data-theme="light"] .hero-eyebrow { color: #444; }
-    [data-theme="light"] #logos { border-color: rgba(0,0,0,.07); }
-    [data-theme="light"] .plan-divider { background: rgba(0,0,0,.06); }
-    [data-theme="light"] .plan-features li { color: var(--text); }
-    [data-theme="light"] .price-card { background: #f8f8f8; border-color: rgba(0,0,0,.08); }
-    [data-theme="light"] #pricing { background: #f0f0f0; }
-    [data-theme="light"] #faq { background: #f0f0f0; }
-    [data-theme="light"] .faq-q { color: var(--text); }
-    [data-theme="light"] .feature-card { background: #ffffff; border-color: rgba(0,0,0,.07); }
-    [data-theme="light"] .testi-card { background: #ffffff; border-color: rgba(0,0,0,.07); }
-    [data-theme="light"] .cta-box { background: #ffffff; }
-    [data-theme="light"] footer { background: #111111; }
-    [data-theme="light"] .email-input { color: var(--text); }
-    [data-theme="light"] .hero-stats { border-color: rgba(0,0,0,.08); }
-    [data-theme="light"] .mock-card { background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.06); }
-    [data-theme="light"] .mock-bar-track { background: rgba(0,0,0,.06); }
-    [data-theme="light"] .mock-task { border-color: rgba(0,0,0,.05); color: #555; }
-    [data-theme="light"] .bt-dot { background: #222; box-shadow: 0 0 20px 10px rgba(0,0,0,.3), 0 0 60px 20px rgba(0,0,0,.15); }
-
-    /* ══════════════════════════════════
-       RESET & BASE
-    ══════════════════════════════════ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    html { scroll-behavior:smooth }
     body {
-      font-family: 'Inter', sans-serif;
-      background: var(--dark);
-      color: var(--text);
-      line-height: 1.6;
-      transition: background .3s, color .3s;
+      font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+      -webkit-font-smoothing:antialiased; overflow-x:hidden;
     }
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
+    a { text-decoration:none; color:inherit }
+    button { font-family:inherit; cursor:pointer; border:none }
 
-    /* ══════════════════════════════════
-       SCROLL REVEAL
-    ══════════════════════════════════ */
-    .reveal {
-      opacity: 0;
-      transform: translateY(32px);
-      transition: opacity .6s ease, transform .6s ease;
-    }
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .reveal-delay-1 { transition-delay: .1s; }
-    .reveal-delay-2 { transition-delay: .2s; }
-    .reveal-delay-3 { transition-delay: .3s; }
-    .reveal-delay-4 { transition-delay: .4s; }
-    .reveal-delay-5 { transition-delay: .5s; }
-
-
-    /* ══════════════════════════════════
-       UTILITIES
-    ══════════════════════════════════ */
-    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
-    .section    { padding: 96px 0; }
-    /* Sofia: "Cómo funciona" usa surface2 en dark para no romper el ritmo */
-    .section-light {
-      background: var(--surface2);
-      color: var(--text);
-    }
-    [data-theme="light"] .section-light {
-      background: var(--section-alt-bg);
-      color: var(--section-alt-text);
-    }
-    .section-light .muted { color: var(--muted); }
-    [data-theme="light"] .section-light .muted { color: var(--section-alt-muted); }
-    .badge {
-      display: inline-block;
-      background: rgba(200,200,200,.15);
-      color: var(--primary);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 50px;
-      padding: 6px 16px;
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .section-title {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 800;
-      line-height: 1.2;
-      margin-bottom: 16px;
-    }
-    .section-sub {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 540px;
-      margin: 0 auto 56px;
-    }
-    .text-center { text-align: center; }
-    .grad-text {
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ══════════════════════════════════
-       BUTTONS
-    ══════════════════════════════════ */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: .95rem;
-      cursor: pointer;
-      border: none;
-      transition: all .25s ease;
-      font-family: inherit;
-    }
-    /* Botón primario: color sólido para máximo contraste en ambos modos */
-    .btn-primary {
-      background: var(--text);   /* #e5e5e5 dark / #111111 light */
-      color: var(--dark);        /* #080808 dark / #f8f8f8 light → contraste >16:1 */
-      box-shadow: 0 4px 20px rgba(255,255,255,.12);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(255,255,255,.2); }
-    [data-theme="light"] .btn-primary { box-shadow: 0 4px 20px rgba(0,0,0,.2); }
-    .btn-outline {
-      background: transparent;
-      border: 1.5px solid rgba(255,255,255,.2);
-      color: var(--white);
-    }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-    /* ══════════════════════════════════
-       NAVBAR
-    ══════════════════════════════════ */
-    nav {
-      position: sticky; top: 0; left: 0; right: 0;
-      z-index: 1000;
-      padding: 14px 0;
-      background: var(--nav-bg);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      transition: background .3s;
+    /* NAV */
+    .nav {
+      position:sticky; top:0; z-index:100;
+      background:rgba(8,8,8,.88); backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
     }
     .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      max-width:1100px; margin:0 auto; padding:0 24px;
+      height:60px; display:flex; align-items:center; gap:32px; position:relative;
     }
     .logo {
-      font-size: 1.4rem;
-      font-weight: 800;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size:1.2rem; font-weight:800; letter-spacing:-.04em;
+      background:var(--grad); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text; flex-shrink:0;
     }
-    .nav-links {
-      display: flex;
-      list-style: none;
-      gap: 32px;
+    .nav-links { display:flex; align-items:center; gap:28px }
+    .nav-links > a { font-size:.84rem; color:var(--muted); transition:color .15s }
+    .nav-links > a:hover { color:var(--text) }
+    .nav-right { display:flex; align-items:center; gap:12px; margin-left:auto }
+    .nav-login { font-size:.84rem; color:var(--muted); transition:color .15s }
+    .nav-login:hover { color:var(--text) }
+    .btn {
+      display:inline-flex; align-items:center; justify-content:center;
+      border-radius:10px; font-weight:600; transition:all .15s;
+      cursor:pointer; font-family:inherit; border:none;
     }
-    .nav-links a {
-      font-size: .9rem;
-      color: var(--muted);
-      font-weight: 500;
-      transition: color .2s;
+    .btn-primary { background:var(--text); color:var(--bg); padding:10px 20px; font-size:.84rem }
+    .btn-primary:hover { opacity:.85 }
+    .btn-ghost {
+      background:transparent; color:var(--muted);
+      border:1px solid var(--border-md); padding:10px 20px; font-size:.84rem;
     }
-    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
-    .nav-cta { display: flex; gap: 12px; align-items: center; }
+    .btn-ghost:hover { color:var(--text); border-color:rgba(255,255,255,.2) }
+    .btn-lg { padding:14px 28px; font-size:.95rem; border-radius:12px }
+    .hamburger {
+      display:none; background:none; color:var(--muted);
+      font-size:1.3rem; padding:6px 8px; margin-left:auto;
+      border-radius:8px; transition:color .15s;
+    }
+    .hamburger:hover { color:var(--text) }
 
-    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
-    .hamburger span { width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: .3s; display: block; }
+    /* HERO */
+    .hero {
+      max-width:1100px; margin:0 auto; padding:80px 24px 64px;
+      display:grid; grid-template-columns:1fr 1fr; gap:64px; align-items:center;
+    }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:20px; padding:6px 14px;
+      font-size:.74rem; color:var(--muted); margin-bottom:24px;
+    }
+    .hero-badge-dot { width:6px; height:6px; border-radius:50%; background:var(--kcal); flex-shrink:0 }
+    .hero-h1 {
+      font-size:clamp(2.2rem, 5vw, 3.4rem); font-weight:800;
+      letter-spacing:-.04em; line-height:1.1; margin-bottom:20px;
+    }
+    .hero-h1 em {
+      font-style:normal;
+      background:var(--grad); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .hero-sub { font-size:1rem; color:var(--muted); line-height:1.7; margin-bottom:32px }
+    .hero-ctas { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px }
+    .hero-trust { display:flex; gap:18px; flex-wrap:wrap }
+    .hero-trust span { font-size:.76rem; color:var(--muted) }
+    .hero-trust span::before { content:'✓ '; color:var(--kcal) }
 
-    /* ══════════════════════════════════
-       HERO
-    ══════════════════════════════════ */
-    /* Carmen: nav es sticky ahora, padding-top: 0 */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 0;
-      position: relative;
-      overflow: hidden;
+    /* Hero mockup */
+    .hero-mockup {
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:var(--radius-xl); padding:22px;
+      box-shadow:var(--shadow-lg); position:relative; overflow:hidden;
     }
+    .hero-mockup::before {
+      content:''; position:absolute; top:-60px; right:-60px;
+      width:220px; height:220px; border-radius:50%;
+      background:radial-gradient(circle, rgba(77,157,224,.06) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .mockup-header {
+      display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;
+    }
+    .mockup-title { font-size:.8rem; font-weight:600 }
+    .mockup-badge {
+      font-size:.62rem; background:rgba(82,183,136,.12);
+      color:var(--kcal); border:1px solid rgba(82,183,136,.2);
+      padding:3px 10px; border-radius:20px; font-weight:600;
+    }
+    .mockup-macros {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:16px;
+    }
+    .mockup-macro {
+      background:var(--surface2); border-radius:12px; padding:11px 8px; text-align:center;
+    }
+    .mockup-macro-val { font-size:1rem; font-weight:700; letter-spacing:-.03em }
+    .mockup-macro-label { font-size:.59rem; color:var(--muted); margin-top:2px }
+    .mockup-macro-bar { height:3px; border-radius:2px; margin-top:8px; background:var(--surface3); overflow:hidden }
+    .mockup-macro-fill { height:100%; border-radius:2px }
+    .mockup-meals { display:flex; flex-direction:column; gap:8px }
+    .mockup-meal {
+      background:var(--surface2); border-radius:12px; padding:11px 13px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .mockup-check { width:18px; height:18px; border-radius:50%; flex-shrink:0; border:1.5px solid }
+    .mockup-check.done { background:var(--kcal); border-color:var(--kcal) }
+    .mockup-check.pending { border-color:rgba(255,255,255,.15) }
+    .mockup-meal-icon {
+      width:30px; height:30px; border-radius:8px; background:var(--surface3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.85rem; flex-shrink:0;
+    }
+    .mockup-meal-info { flex:1; min-width:0 }
+    .mockup-meal-name { font-size:.74rem; font-weight:600 }
+    .mockup-meal-foods { font-size:.65rem; color:var(--muted); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .mockup-meal-kcal { font-size:.7rem; color:var(--muted); flex-shrink:0 }
 
-    /* ── BACKGROUND PATHS (port de background-paths.tsx) ── */
-    .hero-bg-paths {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 0;
+    /* SUPERMARKETS */
+    .supermarkets {
+      border-top:1px solid var(--border); border-bottom:1px solid var(--border); padding:26px 24px;
     }
-    .hero-bg-paths svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      color: rgba(255,255,255,1);
+    .supermarkets-inner {
+      max-width:1100px; margin:0 auto;
+      display:flex; align-items:center; gap:28px; flex-wrap:wrap;
     }
-    [data-theme="light"] .hero-bg-paths svg {
-      color: rgba(0,0,0,1);
-    }
-
-    /* El gradiente pasa a ser un overlay encima de los paths */
-    .hero-bg {
-      position: absolute; inset: 0;
-      z-index: 1;
-      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(255,255,255,.04) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    [data-theme="light"] .hero-bg {
-      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,0,0,.03) 0%, transparent 70%);
-    }
-    /* El contenido del hero queda sobre paths y gradiente */
-    .hero-grid { position: relative; z-index: 2; }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: center;
-      position: relative;
-    }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(200,200,200,.1);
-      border: 1px solid rgba(200,200,200,.25);
-      border-radius: 50px;
-      padding: 6px 14px;
-      font-size: .8rem;
-      font-weight: 600;
-      color: #c0c0c0;
-      margin-bottom: 24px;
-    }
-    .hero-eyebrow::before {
-      content: '';
-      width: 8px; height: 8px;
-      background: var(--primary);
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .hero h1 {
-      font-size: clamp(2.2rem, 5vw, 3.6rem);
-      font-weight: 800;
-      line-height: 1.15;
-      margin-bottom: 20px;
-      color: var(--text);
-    }
-    .hero-sub {
-      font-size: 1.1rem;
-      color: var(--muted);
-      margin-bottom: 36px;
-      max-width: 460px;
-    }
-    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
-    .hero-stats {
-      display: flex;
-      gap: 32px;
-      margin-top: 48px;
-      padding-top: 32px;
-      border-top: 1px solid var(--border);
-    }
-    .stat-num {
-      font-size: 1.6rem;
-      font-weight: 800;
-      background: var(--grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .stat-label { font-size: .8rem; color: var(--muted); margin-top: 2px; }
-
-    /* Dashboard mockup */
-    .hero-visual { position: relative; }
-    .mockup {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 24px 80px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.08);
-      transition: background .3s;
-    }
-    .mockup-bar {
-      background: rgba(255,255,255,.05);
-      padding: 10px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-    [data-theme="light"] .mockup-bar { background: rgba(0,0,0,.03); }
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot-r { background: #FF5F57; }
-    .dot-y { background: #888888; }
-    .dot-g { background: #aaaaaa; }
-    .mockup-body { padding: 20px; }
-    .mock-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-    .mock-title { font-size: .85rem; font-weight: 700; color: var(--text); }
-    .mock-badge {
-      background: rgba(200,200,200,.2); color: var(--primary);
-      border-radius: 4px; padding: 3px 10px; font-size: .72rem; font-weight: 600;
-    }
-    .mock-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .mock-card {
-      background: rgba(255,255,255,.04);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 12px;
-      transition: background .3s;
-    }
-    .mock-card-num { font-size: 1.4rem; font-weight: 800; color: var(--text); }
-    .mock-card-label { font-size: .68rem; color: var(--muted); margin-top: 2px; }
-    .mock-progress-row { margin-bottom: 10px; }
-    .mock-row-label { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-bottom: 5px; }
-    .mock-bar-track { height: 5px; background: rgba(255,255,255,.07); border-radius: 10px; overflow: hidden; }
-    .mock-bar-fill { height: 100%; border-radius: 10px; background: var(--grad); }
-    /* animated progress bars */
-    .mock-bar-fill { width: 0; transition: width 1.4s ease 0.5s; }
-    .bars-animated .fill-67 { width: 67%; }
-    .bars-animated .fill-82 { width: 82%; }
-
-    .mock-tasks { margin-top: 14px; }
-    .mock-task {
-      display: flex; align-items: center; gap: 8px;
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-      font-size: .75rem; color: var(--muted);
-      transition: border-color .3s;
-    }
-    .mock-task-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .mock-task span { margin-left: auto; }
-    .mock-tag { font-size: .65rem; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
-    .hero-glow {
-      position: absolute;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(200,200,200,.3) 0%, transparent 70%);
-      top: -60px; right: -60px;
-      pointer-events: none; border-radius: 50%;
+    .supermarkets-label { font-size:.76rem; color:var(--muted); flex-shrink:0 }
+    .supermarket-badges { display:flex; gap:10px; flex-wrap:wrap }
+    .supermarket-badge {
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:8px; padding:7px 16px; font-size:.78rem; font-weight:600;
     }
 
-    /* ══════════════════════════════════
-       VIDEO MODAL
-    ══════════════════════════════════ */
-    .modal-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.8);
-      backdrop-filter: blur(6px);
-      z-index: 9000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .3s;
+    /* HOW IT WORKS */
+    .how { max-width:1100px; margin:0 auto; padding:80px 24px }
+    .section-eyebrow {
+      font-size:.74rem; font-weight:700; letter-spacing:.1em;
+      text-transform:uppercase; color:var(--muted); margin-bottom:12px;
     }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 820px;
-      overflow: hidden;
-      transform: scale(.94) translateY(20px);
-      transition: transform .35s ease;
-      box-shadow: 0 32px 100px rgba(0,0,0,.6);
+    .section-title {
+      font-size:clamp(1.6rem, 3.5vw, 2.4rem); font-weight:800;
+      letter-spacing:-.04em; line-height:1.2; margin-bottom:48px;
     }
-    .modal-overlay.open .modal-box { transform: scale(1) translateY(0); }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      background: rgba(255,255,255,.04);
-      border-bottom: 1px solid var(--border);
+    .how-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px }
+    .how-step {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius-xl); padding:28px;
     }
-    [data-theme="light"] .modal-header { background: rgba(0,0,0,.03); }
-    .modal-header span { font-size: .9rem; font-weight: 700; color: var(--text); }
-    .modal-close {
-      width: 30px; height: 30px; border-radius: 8px;
-      background: rgba(255,255,255,.08); border: none;
-      color: var(--muted); font-size: 1.1rem; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .2s, color .2s;
+    .how-num {
+      width:34px; height:34px; border-radius:50%;
+      background:var(--surface3); border:1px solid var(--border-md);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.78rem; font-weight:700; color:var(--muted); margin-bottom:18px;
     }
-    .modal-close:hover { background: rgba(160,160,160,.2); color: #aaaaaa; }
-    /* Animated demo inside modal */
-    .demo-screen {
-      padding: 24px;
-      background: var(--dark);
-    }
-    [data-theme="light"] .demo-screen { background: #f0f0f0; }
-    .demo-tabs {
-      display: flex; gap: 4px;
-      background: rgba(255,255,255,.05);
-      border-radius: 8px; padding: 4px;
-      margin-bottom: 20px; width: fit-content;
-    }
-    [data-theme="light"] .demo-tabs { background: rgba(0,0,0,.05); }
-    .demo-tab {
-      padding: 6px 16px; border-radius: 6px;
-      font-size: .8rem; font-weight: 600;
-      color: var(--muted); cursor: pointer;
-      transition: all .2s; border: none; background: none;
-      font-family: inherit;
-    }
-    .demo-tab.active { background: var(--text); color: var(--dark); }
-    .demo-content { display: none; }
-    .demo-content.active { display: block; }
-    .demo-kanban {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-    }
-    .demo-col-title {
-      font-size: .72rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--muted); margin-bottom: 10px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .demo-col-count {
-      background: rgba(255,255,255,.08); border-radius: 50%;
-      width: 18px; height: 18px; font-size: .65rem;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--text);
-    }
-    [data-theme="light"] .demo-col-count { background: rgba(0,0,0,.08); }
-    .demo-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 12px;
-      font-size: .78rem; color: var(--text);
-      margin-bottom: 8px;
-      transition: background .3s;
-    }
-    [data-theme="light"] .demo-card { background: #fff; }
-    .demo-card-tag {
-      display: inline-block; font-size: .62rem; font-weight: 700;
-      padding: 2px 6px; border-radius: 4px; margin-bottom: 6px;
-    }
-    .demo-card-user {
-      display: flex; align-items: center; gap: 6px;
-      margin-top: 8px; color: var(--muted); font-size: .7rem;
-    }
-    .mini-avatar {
-      width: 18px; height: 18px; border-radius: 50%;
-      background: var(--grad);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .55rem; font-weight: 700; color: #fff;
-    }
-    /* demo metrics view */
-    .demo-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .metric-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px; padding: 14px;
-    }
-    [data-theme="light"] .metric-card { background: #fff; }
-    .metric-label { font-size: .72rem; color: var(--muted); margin-bottom: 6px; }
-    .metric-val { font-size: 1.5rem; font-weight: 800; color: var(--text); }
-    .metric-trend { font-size: .72rem; color: #aaaaaa; margin-top: 2px; }
-    /* demo chart bars */
-    .mini-chart { display: flex; align-items: flex-end; gap: 4px; height: 48px; margin-top: 8px; }
-    .mini-bar {
-      flex: 1; border-radius: 3px 3px 0 0;
-      background: var(--primary); opacity: .5;
-      animation: growBar .8s ease forwards;
-      transform-origin: bottom;
-    }
-    @keyframes growBar { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+    .how-icon { font-size:1.5rem; margin-bottom:12px }
+    .how-title { font-size:.96rem; font-weight:700; margin-bottom:8px }
+    .how-desc { font-size:.82rem; color:var(--muted); line-height:1.65 }
 
-    /* ══════════════════════════════════
-       LOGOS
-    ══════════════════════════════════ */
-    #logos {
-      padding: 48px 0;
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-    .logos-label {
-      text-align: center; font-size: .8rem; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .1em; margin-bottom: 32px;
-    }
-    .logos-grid {
-      display: flex; justify-content: center;
-      align-items: center; gap: 48px; flex-wrap: wrap;
-    }
-    .logo-item {
-      font-size: 1.1rem; font-weight: 700;
-      color: rgba(255,255,255,.2); letter-spacing: .05em;
-      transition: color .25s, letter-spacing .3s;
-      cursor: default;
-    }
-    /* Sofia: hover más pronunciado con color y tracking */
-    .logo-item:hover { color: var(--primary); letter-spacing: .12em; }
-
-    /* ══════════════════════════════════
-       FEATURES
-    ══════════════════════════════════ */
-    #features .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
-    }
+    /* FEATURES */
+    .features { max-width:1100px; margin:0 auto; padding:0 24px 80px }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px }
     .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 32px;
-      transition: transform .3s, box-shadow .3s, border-color .3s, background .3s;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:var(--radius-xl); padding:28px; transition:border-color .2s;
     }
-    .feature-card:hover {
-      transform: translateY(-6px); box-shadow: var(--shadow);
-      border-color: rgba(200,200,200,.3);
-    }
+    .feature-card:hover { border-color:var(--border-md) }
     .feature-icon {
-      width: 52px; height: 52px; border-radius: 12px;
-      background: rgba(200,200,200,.12);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; margin-bottom: 20px;
+      width:44px; height:44px; border-radius:14px; background:var(--surface2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:1.2rem; margin-bottom:18px;
     }
-    .feature-title { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
-    .feature-desc  { font-size: .9rem; color: var(--muted); line-height: 1.65; }
+    .feature-title { font-size:.96rem; font-weight:700; margin-bottom:8px }
+    .feature-desc { font-size:.82rem; color:var(--muted); line-height:1.65 }
 
-    /* ══════════════════════════════════
-       HOW IT WORKS
-    ══════════════════════════════════ */
-    #how .steps {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 0; position: relative;
+    /* PREVIEW */
+    .preview {
+      background:var(--surface); border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border); padding:80px 24px; overflow:hidden;
     }
-    #how .steps::before {
-      content: '';
-      position: absolute; top: 28px;
-      left: calc(16.66% + 20px); right: calc(16.66% + 20px);
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      opacity: .4;
+    .preview-inner {
+      max-width:1100px; margin:0 auto;
+      display:grid; grid-template-columns:1fr 1.4fr; gap:64px; align-items:center;
     }
-    .step { text-align: center; padding: 0 24px; }
-    .step-num {
-      width: 56px; height: 56px; border-radius: 50%;
-      background: var(--text); color: var(--dark);
-      font-weight: 800; font-size: 1.2rem;
-      display: inline-flex; align-items: center; justify-content: center;
-      margin: 0 auto 20px;
-      position: relative; z-index: 1;
-      box-shadow: 0 4px 20px rgba(255,255,255,.15);
+    .preview-app {
+      background:var(--bg); border:1px solid var(--border-md);
+      border-radius:var(--radius-xl); overflow:hidden; box-shadow:var(--shadow-lg);
     }
-    .step-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
-    .step-desc  { font-size: .88rem; color: var(--muted); }
+    .preview-app-bar {
+      background:var(--surface); border-bottom:1px solid var(--border);
+      padding:13px 18px; display:flex; align-items:center; gap:8px;
+    }
+    .preview-dot { width:9px; height:9px; border-radius:50% }
+    .preview-app-title { font-size:.76rem; font-weight:600; margin-left:4px }
+    .preview-body { padding:18px }
+    .preview-week { display:grid; grid-template-columns:repeat(7,1fr); gap:5px }
+    .preview-day { text-align:center }
+    .preview-day-name { font-size:.58rem; color:var(--muted); margin-bottom:5px; font-weight:600 }
+    .preview-day-col {
+      background:var(--surface2); border-radius:9px; padding:7px 5px;
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .preview-meal-pill {
+      border-radius:5px; padding:5px 0; text-align:center;
+      font-size:.55rem; font-weight:600;
+    }
+    .preview-day-total { font-size:.58rem; color:var(--muted); text-align:center; margin-top:5px }
 
-    /* ══════════════════════════════════
-       PRICING
-    ══════════════════════════════════ */
-    #pricing { background: var(--surface); }
-    #pricing .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 24px; align-items: start;
+    /* PRICING */
+    .pricing { max-width:1100px; margin:0 auto; padding:80px 24px }
+    .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px }
+    .pricing-card {
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:var(--radius-xl); padding:28px; position:relative;
     }
-    .price-card {
-      background: var(--dark);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 36px 28px;
-      position: relative; transition: transform .3s, background .3s;
+    .pricing-card.popular { border-color:var(--text); box-shadow:0 0 0 1px var(--text) }
+    .popular-badge {
+      position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+      background:var(--text); color:var(--bg);
+      font-size:.62rem; font-weight:700; padding:3px 14px;
+      border-radius:20px; letter-spacing:.04em; white-space:nowrap;
     }
-    .price-card:hover { transform: translateY(-4px); }
-    .price-card.featured {
-      border-color: rgba(255,255,255,.5);
-      box-shadow: 0 0 0 1px rgba(255,255,255,.3), var(--shadow);
-      transform: scale(1.04);
+    .pricing-plan { font-size:.74rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px }
+    .pricing-price { font-size:2.4rem; font-weight:300; letter-spacing:-.04em; line-height:1; margin-bottom:4px }
+    .pricing-price sup { font-size:1rem; font-weight:600; vertical-align:super; margin-right:2px }
+    .pricing-period { font-size:.74rem; color:var(--muted); margin-bottom:24px }
+    .pricing-divider { height:1px; background:var(--border); margin-bottom:24px }
+    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:28px }
+    .pricing-features li { font-size:.82rem; color:var(--muted); display:flex; gap:8px; align-items:flex-start }
+    .pricing-features li::before { content:'✓'; color:var(--kcal); flex-shrink:0; font-weight:700 }
+    .pricing-features li.off { opacity:.4 }
+    .pricing-features li.off::before { content:'—'; color:var(--muted) }
+    .btn-plan {
+      width:100%; padding:12px; border-radius:10px; font-weight:700;
+      font-size:.86rem; cursor:pointer; font-family:inherit; transition:opacity .15s;
+      display:block; text-align:center;
     }
-    .price-card.featured:hover { transform: scale(1.04) translateY(-4px); }
-    .popular-tag {
-      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-      background: var(--text); color: var(--dark);
-      font-size: .72rem; font-weight: 700; padding: 4px 16px;
-      border-radius: 50px; letter-spacing: .06em; text-transform: uppercase;
-    }
-    .plan-name  { font-size: .85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; }
-    .plan-price { font-size: 2.8rem; font-weight: 800; color: var(--text); line-height: 1; }
-    .plan-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 8px; }
-    .plan-price sub { font-size: .9rem; font-weight: 400; color: var(--muted); }
-    .plan-desc { font-size: .85rem; color: var(--muted); margin: 12px 0 24px; }
-    .plan-divider { height: 1px; background: var(--border); margin: 24px 0; }
-    .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
-    .plan-features li { display: flex; gap: 10px; font-size: .88rem; color: var(--text); }
-    .plan-features li::before { content: '✓'; color: var(--primary); font-weight: 700; flex-shrink: 0; }
-    .plan-features li.off { color: var(--muted); }
-    .plan-features li.off::before { content: '✗'; color: rgba(255,255,255,.15); }
-    [data-theme="light"] .plan-features li.off::before { color: rgba(0,0,0,.15); }
-    .btn-plan { width: 100%; justify-content: center; padding: 13px; font-size: .9rem; }
+    .btn-plan-outline { background:transparent; border:1px solid var(--border-md); color:var(--text) }
+    .btn-plan-outline:hover { border-color:rgba(255,255,255,.3) }
+    .btn-plan-solid { background:var(--text); color:var(--bg); border:none }
+    .btn-plan-solid:hover { opacity:.85 }
 
-    /* ── COMPARISON TABLE ── */
-    .compare-wrap {
-      margin-top: 56px;
-      overflow-x: auto;
+    /* CTA FINAL */
+    .cta-final { text-align:center; padding:80px 24px 100px }
+    .cta-h2 {
+      font-size:clamp(1.8rem, 4vw, 2.8rem); font-weight:800;
+      letter-spacing:-.04em; line-height:1.2; margin-bottom:16px;
     }
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .88rem;
-    }
-    .compare-table th {
-      padding: 14px 20px; text-align: left;
-      font-weight: 700; font-size: .8rem;
-      text-transform: uppercase; letter-spacing: .07em;
-      color: var(--muted);
-      border-bottom: 1px solid var(--border);
-    }
-    .compare-table th.featured-col {
-      color: var(--text);
-      background: rgba(255,255,255,.03);
-    }
-    .compare-table td {
-      padding: 12px 20px;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-    }
-    .compare-table td.featured-col { background: rgba(255,255,255,.03); }
-    .compare-table tr:last-child td { border-bottom: none; }
-    .compare-table tr:hover td { background: rgba(255,255,255,.02); }
-    [data-theme="light"] .compare-table tr:hover td { background: rgba(0,0,0,.015); }
-    .check-yes { color: var(--text); font-size: 1rem; }
-    .check-no  { color: var(--muted);   font-size: 1rem; opacity: .4; }
-    .compare-title {
-      text-align: center; font-size: 1.1rem; font-weight: 700;
-      color: var(--text); margin-bottom: 20px;
-    }
+    .cta-sub { font-size:.95rem; color:var(--muted); margin-bottom:32px }
+    .cta-note { font-size:.76rem; color:var(--muted); margin-top:14px }
 
-    /* ══════════════════════════════════
-       TESTIMONIALS
-    ══════════════════════════════════ */
-    #testimonials .grid-3 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    /* FOOTER */
+    footer { border-top:1px solid var(--border); padding:40px 24px }
+    .footer-inner {
+      max-width:1100px; margin:0 auto;
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; gap:20px;
     }
-    .testi-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 28px;
-      transition: transform .3s, background .3s;
+    .footer-logo {
+      font-size:1.1rem; font-weight:800; letter-spacing:-.04em;
+      background:var(--grad); -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent; background-clip:text;
     }
-    .testi-card:hover { transform: translateY(-4px); }
-    .stars { color: #c0c0c0; font-size: .95rem; margin-bottom: 14px; }
-    .testi-quote { font-size: .92rem; color: var(--text); line-height: 1.65; margin-bottom: 20px; font-style: italic; }
-    .testi-author { display: flex; align-items: center; gap: 12px; }
-    .avatar {
-      width: 40px; height: 40px; border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 700; font-size: .85rem; color: var(--text); flex-shrink: 0;
-    }
-    .author-name { font-size: .85rem; font-weight: 700; color: var(--text); }
-    .author-role { font-size: .78rem; color: var(--muted); }
+    .footer-tagline { font-size:.74rem; color:var(--muted); margin-top:2px }
+    .footer-links { display:flex; gap:24px; flex-wrap:wrap }
+    .footer-links a { font-size:.78rem; color:var(--muted); transition:color .15s }
+    .footer-links a:hover { color:var(--text) }
+    .footer-copy { font-size:.74rem; color:var(--muted) }
 
-    /* ══════════════════════════════════
-       FAQ
-    ══════════════════════════════════ */
-    #faq { background: var(--surface); transition: background .3s; }
-    .faq-list { max-width: 720px; margin: 0 auto; }
-    .faq-item { border-bottom: 1px solid var(--border); }
-    .faq-q {
-      width: 100%; background: none; border: none;
-      text-align: left; color: var(--text);
-      font-size: .98rem; font-weight: 600; padding: 20px 0;
-      cursor: pointer; display: flex; justify-content: space-between;
-      align-items: center; gap: 16px; font-family: inherit; transition: color .2s;
-    }
-    .faq-q:hover { color: var(--primary); }
-    .faq-icon {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: rgba(200,200,200,.15);
-      display: inline-flex; align-items: center; justify-content: center;
-      font-size: .75rem; flex-shrink: 0;
-      transition: transform .3s, background .2s;
-    }
-    .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--text); color: var(--dark); }
-    .faq-a {
-      display: none; font-size: .9rem; color: var(--muted);
-      padding-bottom: 20px; line-height: 1.7;
-    }
-    .faq-item.open .faq-a { display: block; }
-
-    /* ══════════════════════════════════
-       CTA FINAL
-    ══════════════════════════════════ */
-    #cta-final { background: var(--dark); text-align: center; transition: background .3s; }
-    .cta-box {
-      background: var(--surface);
-      border: 1px solid rgba(200,200,200,.2);
-      border-radius: 20px; padding: 72px 48px;
-      position: relative; overflow: hidden;
-      transition: background .3s;
-    }
-    .cta-box::before {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(200,200,200,.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .cta-box h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 16px; color: var(--text); }
-    .cta-box p  { color: var(--muted); margin-bottom: 36px; font-size: 1.05rem; }
-    .email-form { display: flex; gap: 12px; max-width: 460px; margin: 0 auto; }
-    .email-input {
-      flex: 1; background: var(--input-bg);
-      border: 1.5px solid var(--input-border);
-      border-radius: 8px; padding: 13px 18px;
-      color: var(--text); font-family: inherit; font-size: .92rem;
-      transition: border-color .2s; outline: none;
-    }
-    .email-input::placeholder { color: var(--muted); }
-    .email-input:focus { border-color: var(--primary); }
-    .cta-note { margin-top: 14px; font-size: .78rem; color: var(--muted); }
-
-    /* ══════════════════════════════════
-       FOOTER
-    ══════════════════════════════════ */
-    footer {
-      background: #0f0f0f;
-      padding: 64px 0 32px;
-      border-top: 1px solid var(--border);
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: 1.8fr 1fr 1fr 1fr;
-      gap: 48px; margin-bottom: 56px;
-    }
-    .footer-brand p { font-size: .88rem; color: var(--muted); margin-top: 12px; line-height: 1.65; max-width: 240px; }
-    .footer-col h4 { font-size: .85rem; font-weight: 700; color: #E0E0E0; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 16px; }
-    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .footer-col ul a { font-size: .88rem; color: #8892B0; transition: color .2s; }
-    .footer-col ul a:hover { color: #fff; }
-    .footer-bottom {
-      display: flex; justify-content: space-between; align-items: center;
-      padding-top: 28px; border-top: 1px solid rgba(255,255,255,.05);
-      font-size: .82rem; color: #8892B0;
-    }
-    .social-links { display: flex; gap: 14px; }
-    .social-link {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: rgba(255,255,255,.05);
-      display: flex; align-items: center; justify-content: center;
-      font-size: .85rem; transition: background .2s; color: #8892B0;
-    }
-    .social-link:hover { background: rgba(200,200,200,.3); color: #fff; }
-
-    /* ══════════════════════════════════
-       BORDER TRAIL
-       Port de border-trail.tsx
-       Usa CSS offset-path (Motion Path API)
-    ══════════════════════════════════ */
-    .border-trail { position: relative; overflow: visible; }
-
-    /* La capa que enmascara el dot al borde de la tarjeta */
-    .bt-mask {
-      pointer-events: none;
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      border: 1px solid transparent;
-      /* Mask: solo muestra el anillo del borde */
-      -webkit-mask-clip: padding-box, border-box;
-      mask-clip: padding-box, border-box;
-      -webkit-mask-composite: destination-out;
-      mask-composite: intersect;
-      -webkit-mask-image: linear-gradient(#000,#000), linear-gradient(#000,#000);
-      mask-image: linear-gradient(transparent,transparent), linear-gradient(#000,#000);
-      overflow: hidden;
-      z-index: 10;
-    }
-
-    /* El dot que viaja por el borde */
-    .bt-dot {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.9);
-      box-shadow:
-        0 0 20px 10px rgba(255,255,255,.5),
-        0 0 60px 20px rgba(255,255,255,.2);
-      /* offset-path traza el rectángulo del borde de la tarjeta */
-      offset-path: rect(0 100% 100% 0 round var(--radius));
-      offset-rotate: 0deg;
-      animation: bt-travel 5s linear infinite;
-    }
-    .bt-dot.slow  { animation-duration: 8s; }
-    .bt-dot.fast  { animation-duration: 3.5s; }
-
-    @keyframes bt-travel {
-      0%   { offset-distance: 0%; }
-      100% { offset-distance: 100%; }
-    }
-
-    /* Fallback: browsers sin offset-path no ven el dot (la tarjeta sigue luciendo bien) */
-    @supports not (offset-path: rect(0 0 0 0)) {
-      .bt-dot { display: none; }
-    }
-
-    /* ══ RESPONSIVE ══════════════════════════════════════ */
-    /* Marco: nav-open como clase CSS para que respete variables de tema */
-    @media (max-width: 900px) {
-      .nav-links { display: none; }
-      .nav-cta .btn-outline { display: none; }
-      .nav-cta .btn-primary { display: none; }
-      .hamburger { display: flex; }
-      .nav-links.nav-open {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        top: 57px; left: 0; right: 0;
-        background: var(--nav-bg);
-        backdrop-filter: blur(14px);
-        padding: 24px 24px 28px;
-        gap: 20px;
-        border-bottom: 1px solid var(--border);
-        z-index: 999;
+    /* MOBILE */
+    @media(max-width:900px){
+      .nav-links { display:none }
+      .nav-links.open {
+        display:flex; flex-direction:column; align-items:stretch; gap:0;
+        position:absolute; top:60px; left:0; right:0;
+        background:var(--surface); border-bottom:1px solid var(--border);
+        padding:8px 16px 16px; z-index:99;
       }
-      .nav-links.nav-open .nav-mobile-cta {
-        display: block;
-        margin-top: 4px;
-        text-align: center;
-        padding: 12px;
-        border-radius: 10px;
-        background: var(--text); color: var(--dark);
-        font-weight: 700; font-size: .9rem;
+      .nav-links.open > a {
+        padding:13px 0; font-size:.9rem;
+        border-bottom:1px solid var(--border);
       }
-      .hero-grid { grid-template-columns: 1fr; }
-      .hero-visual { display: none; }
-      #features .grid-3,
-      #how .steps,
-      #pricing .grid-3,
-      #testimonials .grid-3 { grid-template-columns: 1fr; }
-      #how .steps::before { display: none; }
-      .price-card.featured { transform: none; }
-      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
-      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
-      .demo-kanban { grid-template-columns: 1fr; }
-      .demo-metrics { grid-template-columns: 1fr; }
+      .nav-right { display:none }
+      .nav-links.open .nav-right {
+        display:flex; flex-direction:column; width:100%;
+        gap:8px; padding-top:12px; margin-left:0;
+      }
+      .nav-links.open .nav-login { padding:0; font-size:.9rem; color:var(--muted) }
+      .nav-links.open .btn-primary {
+        display:block; width:100%; text-align:center; padding:12px;
+      }
+      .hamburger { display:block }
+      .hero { grid-template-columns:1fr; padding:48px 24px 40px; gap:36px }
+      .hero-mockup { max-width:440px; margin:0 auto; width:100% }
+      .how-grid { grid-template-columns:1fr }
+      .features-grid { grid-template-columns:1fr 1fr }
+      .preview-inner { grid-template-columns:1fr; gap:40px }
+      .pricing-grid { grid-template-columns:1fr; max-width:420px; margin:0 auto }
     }
-    @media (max-width: 500px) {
-      .section { padding: 64px 0; }
-      .email-form { flex-direction: column; }
-      .cta-box { padding: 40px 20px; }
-      /* Sofia: hero H1 más legible en mobile */
-      .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
-      .hero-stats { flex-direction: column; gap: 16px; }
-      .footer-grid { grid-template-columns: 1fr; }
+    @media(max-width:600px){
+      .features-grid { grid-template-columns:1fr }
+      .hero-ctas { flex-direction:column }
+      .hero-ctas .btn { width:100%; justify-content:center }
+      .supermarkets-inner { flex-direction:column; align-items:flex-start; gap:12px }
+      .preview-week { grid-template-columns:repeat(4,1fr) }
+      .preview-week > *:nth-child(n+5) { display:none }
+      .mockup-macros { grid-template-columns:repeat(2,1fr) }
     }
   </style>
 </head>
 <body>
 
-
-<!-- ══ NAVBAR ══════════════════════════════════════════ -->
-<nav>
-  <div class="container nav-inner">
-    <a href="#" class="logo">FlowDesk</a>
-    <ul class="nav-links">
-      <li><a href="#features">Features</a></li>
-      <li><a href="#how">Cómo funciona</a></li>
-      <li><a href="#pricing">Precios</a></li>
-      <li><a href="#faq">FAQ</a></li>
-      <li><a href="app.html" class="nav-mobile-cta" style="display:none">Empezar gratis</a></li>
-    </ul>
-    <div class="nav-cta">
-      <a href="app.html" class="btn btn-outline">Iniciar sesión</a>
-      <a href="app.html" class="btn btn-primary">Empezar gratis</a>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="logo">NutrIA</a>
+    <div class="nav-links" id="nav-links">
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#caracteristicas">Características</a>
+      <a href="#precios">Precios</a>
+      <div class="nav-right">
+        <a href="login.html" class="nav-login">Iniciar sesión</a>
+        <a href="login.html?m=register" class="btn btn-primary">Empezar gratis</a>
+      </div>
     </div>
-    <button class="hamburger" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menú">☰</button>
   </div>
 </nav>
 
-<!-- ══ HERO ════════════════════════════════════════════ -->
-<section id="hero" class="section">
-  <!-- background-paths.tsx port: dos capas de paths (position=1 y position=-1) -->
-  <div class="hero-bg-paths" aria-hidden="true">
-    <svg id="bp-pos" viewBox="0 0 696 316" fill="none" preserveAspectRatio="xMidYMid slice"><title>Background Paths</title></svg>
-    <svg id="bp-neg" viewBox="0 0 696 316" fill="none" preserveAspectRatio="xMidYMid slice"><title>Background Paths</title></svg>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      Datos reales · Mercadona · Lidl · Carrefour · Alcampo
+    </div>
+    <h1 class="hero-h1">Tu <em>nutricionista</em><br/>personal, con IA</h1>
+    <p class="hero-sub">Planes de alimentación personalizados creados con productos reales de tus supermercados. Adaptados a tus macros, presupuesto y alergias — sin complicaciones.</p>
+    <div class="hero-ctas">
+      <a href="login.html?m=register" class="btn btn-primary btn-lg">Crear mi plan gratis</a>
+      <a href="#como-funciona" class="btn btn-ghost btn-lg">Ver cómo funciona</a>
+    </div>
+    <div class="hero-trust">
+      <span>Sin tarjeta de crédito</span>
+      <span>Plan gratis para siempre</span>
+      <span>Listo en 2 minutos</span>
+    </div>
   </div>
-  <div class="hero-bg"></div>
-  <div class="container hero-grid">
-    <div class="hero-content reveal">
-      <div class="hero-eyebrow">Nuevo: Integración con Slack y Notion</div>
-      <h1>Gestiona tu equipo remoto <span class="grad-text">sin fricción</span></h1>
-      <p class="hero-sub">FlowDesk centraliza tareas, comunicación y métricas en una sola herramienta. Más foco, menos reuniones.</p>
-      <div class="hero-actions">
-        <a href="#cta-final" class="btn btn-primary">Empezar gratis — es rápido</a>
-        <button class="btn btn-outline" onclick="openDemo()">Ver demo en vivo</button>
+
+  <div class="hero-mockup">
+    <div class="mockup-header">
+      <span class="mockup-title">Hoy · Martes</span>
+      <span class="mockup-badge">Plan activo · Día 3</span>
+    </div>
+    <div class="mockup-macros">
+      <div class="mockup-macro">
+        <div class="mockup-macro-val" style="color:var(--kcal)">1840</div>
+        <div class="mockup-macro-label">kcal</div>
+        <div class="mockup-macro-bar"><div class="mockup-macro-fill" style="width:78%;background:var(--kcal)"></div></div>
       </div>
-      <div class="hero-stats">
-        <div>
-          <div class="stat-num" data-count="12000" data-suffix="k+">0</div>
-          <div class="stat-label">Equipos activos</div>
-        </div>
-        <div>
-          <div class="stat-num" data-count="98" data-suffix="%">0</div>
-          <div class="stat-label">Satisfacción</div>
-        </div>
-        <div>
-          <div class="stat-num" data-count="49" data-suffix="★" data-decimal="true">0</div>
-          <div class="stat-label">App Store</div>
-        </div>
+      <div class="mockup-macro">
+        <div class="mockup-macro-val" style="color:var(--protein)">142g</div>
+        <div class="mockup-macro-label">proteína</div>
+        <div class="mockup-macro-bar"><div class="mockup-macro-fill" style="width:85%;background:var(--protein)"></div></div>
+      </div>
+      <div class="mockup-macro">
+        <div class="mockup-macro-val" style="color:var(--carbs)">195g</div>
+        <div class="mockup-macro-label">carbos</div>
+        <div class="mockup-macro-bar"><div class="mockup-macro-fill" style="width:70%;background:var(--carbs)"></div></div>
+      </div>
+      <div class="mockup-macro">
+        <div class="mockup-macro-val" style="color:var(--fat)">58g</div>
+        <div class="mockup-macro-label">grasas</div>
+        <div class="mockup-macro-bar"><div class="mockup-macro-fill" style="width:88%;background:var(--fat)"></div></div>
       </div>
     </div>
-
-    <div class="hero-visual reveal reveal-delay-2">
-      <div class="hero-glow"></div>
-      <div class="mockup" id="hero-mockup">
-        <div class="mockup-bar">
-          <div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div>
+    <div class="mockup-meals">
+      <div class="mockup-meal">
+        <div class="mockup-check done"></div>
+        <div class="mockup-meal-icon">☕</div>
+        <div class="mockup-meal-info">
+          <div class="mockup-meal-name">Desayuno</div>
+          <div class="mockup-meal-foods">Avena · Yogur natural · Plátano</div>
         </div>
-        <div class="mockup-body">
-          <div class="mock-header">
-            <span class="mock-title">Dashboard — Sprint 12</span>
-            <span class="mock-badge">En vivo</span>
-          </div>
-          <div class="mock-cards">
-            <div class="mock-card"><div class="mock-card-num">24</div><div class="mock-card-label">Tareas activas</div></div>
-            <div class="mock-card"><div class="mock-card-num">8</div><div class="mock-card-label">Completadas</div></div>
-            <div class="mock-card"><div class="mock-card-num">3</div><div class="mock-card-label">Bloqueadas</div></div>
-          </div>
-          <div class="mock-progress-row">
-            <div class="mock-row-label"><span>Progreso del sprint</span><span>67%</span></div>
-            <div class="mock-bar-track"><div class="mock-bar-fill fill-67"></div></div>
-          </div>
-          <div class="mock-progress-row">
-            <div class="mock-row-label"><span>Tiempo estimado</span><span>82%</span></div>
-            <div class="mock-bar-track"><div class="mock-bar-fill fill-82"></div></div>
-          </div>
-          <div class="mock-tasks">
-            <div class="mock-task">
-              <div class="mock-task-dot" style="background:#c0c0c0"></div>
-              Rediseñar onboarding
-              <span><span class="mock-tag" style="background:rgba(255,255,255,.12);color:#e0e0e0">UI</span></span>
-            </div>
-            <div class="mock-task">
-              <div class="mock-task-dot" style="background:#888"></div>
-              API de notificaciones
-              <span><span class="mock-tag" style="background:rgba(150,150,150,.15);color:#aaa">Done</span></span>
-            </div>
-            <div class="mock-task">
-              <div class="mock-task-dot" style="background:#666"></div>
-              Tests de integración
-              <span><span class="mock-tag" style="background:rgba(100,100,100,.12);color:#888">Block</span></span>
-            </div>
-          </div>
+        <div class="mockup-meal-kcal">412 kcal</div>
+      </div>
+      <div class="mockup-meal">
+        <div class="mockup-check done"></div>
+        <div class="mockup-meal-icon">🥗</div>
+        <div class="mockup-meal-info">
+          <div class="mockup-meal-name">Comida</div>
+          <div class="mockup-meal-foods">Pechuga pollo · Arroz · Brócoli</div>
         </div>
+        <div class="mockup-meal-kcal">648 kcal</div>
+      </div>
+      <div class="mockup-meal">
+        <div class="mockup-check pending"></div>
+        <div class="mockup-meal-icon">🍎</div>
+        <div class="mockup-meal-info">
+          <div class="mockup-meal-name">Merienda</div>
+          <div class="mockup-meal-foods">Queso fresco · Manzana</div>
+        </div>
+        <div class="mockup-meal-kcal">238 kcal</div>
+      </div>
+      <div class="mockup-meal" style="background:transparent;border:1px solid var(--border);border-radius:12px">
+        <div class="mockup-check pending"></div>
+        <div class="mockup-meal-icon">🍽</div>
+        <div class="mockup-meal-info">
+          <div class="mockup-meal-name">Cena</div>
+          <div class="mockup-meal-foods">Salmón · Espinacas · Patata</div>
+        </div>
+        <div class="mockup-meal-kcal">542 kcal</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ VIDEO DEMO MODAL ══════════════════════════════════ -->
-<div class="modal-overlay" id="demo-modal" role="dialog" aria-modal="true" aria-label="Demo de FlowDesk">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span>FlowDesk — Demo interactivo</span>
-      <button class="modal-close" onclick="closeDemo()" aria-label="Cerrar">✕</button>
-    </div>
-    <div class="demo-screen">
-      <div class="demo-tabs">
-        <button class="demo-tab active" onclick="switchTab(this,'tab-kanban')">Tablero Kanban</button>
-        <button class="demo-tab" onclick="switchTab(this,'tab-metrics')">Métricas</button>
-      </div>
-
-      <!-- TAB: Kanban -->
-      <div class="demo-content active" id="tab-kanban">
-        <div class="demo-kanban">
-          <div>
-            <div class="demo-col-title">Por hacer <span class="demo-col-count">4</span></div>
-            <div class="demo-card">
-              <span class="demo-card-tag" style="background:rgba(200,200,200,.15);color:#e0e0e0">Feature</span>
-              <div>Sistema de notificaciones push</div>
-              <div class="demo-card-user"><div class="mini-avatar">AM</div> Ana M.</div>
-            </div>
-            <div class="demo-card">
-              <span class="demo-card-tag" style="background:rgba(136,136,136,.15);color:#c0c0c0">Design</span>
-              <div>Nuevos iconos de navegación</div>
-              <div class="demo-card-user"><div class="mini-avatar">LR</div> Laura R.</div>
-            </div>
-          </div>
-          <div>
-            <div class="demo-col-title">En progreso <span class="demo-col-count">3</span></div>
-            <div class="demo-card" style="border-left: 3px solid #e0e0e0;">
-              <span class="demo-card-tag" style="background:rgba(150,150,150,.12);color:#aaaaaa">API</span>
-              <div>Integración con Slack v2</div>
-              <div class="demo-card-user"><div class="mini-avatar">DK</div> David K.</div>
-            </div>
-            <div class="demo-card" style="border-left: 3px solid #e0e0e0;">
-              <span class="demo-card-tag" style="background:rgba(200,200,200,.15);color:#e0e0e0">Feature</span>
-              <div>Rediseño del onboarding</div>
-              <div class="demo-card-user"><div class="mini-avatar">AM</div> Ana M.</div>
-            </div>
-          </div>
-          <div>
-            <div class="demo-col-title">Completado <span class="demo-col-count">8</span></div>
-            <div class="demo-card" style="opacity:.7">
-              <span class="demo-card-tag" style="background:rgba(150,150,150,.12);color:#aaaaaa">Done ✓</span>
-              <div>Migración a base de datos v2</div>
-              <div class="demo-card-user"><div class="mini-avatar">DK</div> David K.</div>
-            </div>
-            <div class="demo-card" style="opacity:.7">
-              <span class="demo-card-tag" style="background:rgba(150,150,150,.12);color:#aaaaaa">Done ✓</span>
-              <div>Dashboard de métricas</div>
-              <div class="demo-card-user"><div class="mini-avatar">LR</div> Laura R.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB: Métricas -->
-      <div class="demo-content" id="tab-metrics">
-        <div class="demo-metrics">
-          <div class="metric-card">
-            <div class="metric-label">Velocidad del equipo</div>
-            <div class="metric-val">42 pts</div>
-            <div class="metric-trend">+18% vs sprint anterior</div>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:40%;animation-delay:.1s"></div>
-              <div class="mini-bar" style="height:55%;animation-delay:.2s"></div>
-              <div class="mini-bar" style="height:48%;animation-delay:.3s"></div>
-              <div class="mini-bar" style="height:70%;animation-delay:.4s"></div>
-              <div class="mini-bar" style="height:62%;animation-delay:.5s"></div>
-              <div class="mini-bar" style="height:85%;animation-delay:.6s;opacity:1"></div>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Tareas completadas</div>
-            <div class="metric-val">8 / 24</div>
-            <div class="metric-trend">+3 hoy</div>
-            <div class="mini-chart">
-              <div class="mini-bar" style="height:30%;background:#aaaaaa;animation-delay:.1s"></div>
-              <div class="mini-bar" style="height:50%;background:#aaaaaa;animation-delay:.2s"></div>
-              <div class="mini-bar" style="height:45%;background:#aaaaaa;animation-delay:.3s"></div>
-              <div class="mini-bar" style="height:65%;background:#aaaaaa;animation-delay:.4s"></div>
-              <div class="mini-bar" style="height:55%;background:#aaaaaa;animation-delay:.5s"></div>
-              <div class="mini-bar" style="height:75%;background:#aaaaaa;animation-delay:.6s;opacity:1"></div>
-            </div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">Tiempo de ciclo promedio</div>
-            <div class="metric-val">2.4 días</div>
-            <div class="metric-trend" style="color:#aaaaaa">-0.8 días (mejor)</div>
-          </div>
-          <div class="metric-card">
-            <div class="metric-label">NPS del equipo</div>
-            <div class="metric-val">82</div>
-            <div class="metric-trend">Excelente · +5 este mes</div>
-          </div>
-        </div>
-      </div>
+<!-- SUPERMARKETS -->
+<div class="supermarkets">
+  <div class="supermarkets-inner">
+    <span class="supermarkets-label">Datos actualizados de:</span>
+    <div class="supermarket-badges">
+      <span class="supermarket-badge">Mercadona</span>
+      <span class="supermarket-badge">Lidl</span>
+      <span class="supermarket-badge">Carrefour</span>
+      <span class="supermarket-badge">Alcampo</span>
     </div>
   </div>
 </div>
 
-<!-- ══ LOGOS ════════════════════════════════════════════ -->
-<section id="logos">
-  <div class="container reveal">
-    <p class="logos-label">Usado por equipos en más de 40 países</p>
-    <div class="logos-grid">
-      <span class="logo-item">STRIPE</span>
-      <span class="logo-item">NOTION</span>
-      <span class="logo-item">VERCEL</span>
-      <span class="logo-item">FIGMA</span>
-      <span class="logo-item">LOOM</span>
-      <span class="logo-item">LINEAR</span>
+<!-- HOW IT WORKS -->
+<section class="how" id="como-funciona">
+  <div class="section-eyebrow">Proceso</div>
+  <h2 class="section-title">Listo en tres pasos</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <div class="how-num">1</div>
+      <div class="how-icon">🎯</div>
+      <div class="how-title">Cuéntanos tus objetivos</div>
+      <div class="how-desc">Dinos si quieres perder grasa, ganar músculo o mantenerte. Configura tus calorías, distribución de macros y cualquier alergia o restricción.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">2</div>
+      <div class="how-icon">🛒</div>
+      <div class="how-title">Elige tu supermercado</div>
+      <div class="how-desc">Selecciona dónde haces la compra habitualmente y cuánto quieres gastar al día. La IA filtra los mejores productos dentro de tu presupuesto.</div>
+    </div>
+    <div class="how-step">
+      <div class="how-num">3</div>
+      <div class="how-icon">📋</div>
+      <div class="how-title">Recibe tu plan semanal</div>
+      <div class="how-desc">En segundos tienes tu plan de 7 días completo — con macros exactos por comida y la lista de la compra lista para usar.</div>
     </div>
   </div>
 </section>
 
-<!-- ══ FEATURES ═════════════════════════════════════════ -->
-<section id="features" class="section">
-  <div class="container">
-    <div class="text-center reveal">
-      <div class="badge">Funcionalidades</div>
-      <h2 class="section-title">Todo lo que tu equipo <span class="grad-text">necesita</span></h2>
-      <p class="section-sub muted">Diseñado para que los equipos fluyan sin interrupciones, sin importar la zona horaria.</p>
+<!-- FEATURES -->
+<section class="features" id="caracteristicas">
+  <div class="section-eyebrow">Características</div>
+  <h2 class="section-title">Todo lo que necesitas,<br/>nada que no necesitas</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🗄️</div>
+      <div class="feature-title">Base de datos real</div>
+      <div class="feature-desc">Miles de productos de Mercadona, Lidl, Carrefour y Alcampo con información nutricional y precios reales actualizados.</div>
     </div>
-    <div class="grid-3">
-      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon">⚡</div><h3 class="feature-title">Tableros inteligentes</h3><p class="feature-desc">Kanban, lista o cronograma. FlowDesk se adapta a tu metodología y aprende de tus patrones de trabajo.</p></div>
-      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon">📊</div><h3 class="feature-title">Métricas en tiempo real</h3><p class="feature-desc">Velocidad del equipo, burndown charts y predicciones de entrega con IA. Toma decisiones con datos.</p></div>
-      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon">🔗</div><h3 class="feature-title">Integraciones nativas</h3><p class="feature-desc">Slack, GitHub, Figma, Notion y 40+ herramientas más. Tu stack unificado en un solo lugar.</p></div>
-      <div class="feature-card reveal reveal-delay-1"><div class="feature-icon">🤖</div><h3 class="feature-title">Asistente con IA</h3><p class="feature-desc">Genera subtareas, estima tiempos y detecta cuellos de botella automáticamente con nuestro copiloto.</p></div>
-      <div class="feature-card reveal reveal-delay-2"><div class="feature-icon">🔒</div><h3 class="feature-title">Seguridad enterprise</h3><p class="feature-desc">SSO, 2FA, auditoría de accesos y cifrado AES-256. Cumple con SOC 2 Type II y GDPR.</p></div>
-      <div class="feature-card reveal reveal-delay-3"><div class="feature-icon">🌍</div><h3 class="feature-title">Async-first</h3><p class="feature-desc">Actualizaciones de estado, check-ins automáticos y reuniones opcionales. Trabaja en tu horario.</p></div>
+    <div class="feature-card">
+      <div class="feature-icon">⚖️</div>
+      <div class="feature-title">Control exacto de macros</div>
+      <div class="feature-desc">Proteínas, carbohidratos, grasas y calorías calculados al gramo. Tu plan se ajusta automáticamente a tus objetivos diarios.</div>
     </div>
-  </div>
-</section>
-
-<!-- ══ HOW IT WORKS ══════════════════════════════════════ -->
-<section id="how" class="section section-light">
-  <div class="container">
-    <div class="text-center reveal">
-      <div class="badge" style="background:rgba(200,200,200,.08);color:var(--primary)">Proceso</div>
-      <h2 class="section-title">Listo en 3 minutos</h2>
-      <p class="section-sub muted">Sin onboarding complejo. Sin tarjeta de crédito. Sin excusas.</p>
+    <div class="feature-card">
+      <div class="feature-icon">💶</div>
+      <div class="feature-title">Optimizado para tu bolsillo</div>
+      <div class="feature-desc">Define tu presupuesto diario y la IA selecciona las combinaciones más económicas sin sacrificar calidad nutricional.</div>
     </div>
-    <div class="steps">
-      <div class="step reveal reveal-delay-1">
-        <div class="step-num">1</div>
-        <h3 class="step-title">Crea tu workspace</h3>
-        <p class="step-desc">Regístrate con email o Google. Invita a tu equipo con un link. Todo configurado en segundos.</p>
-      </div>
-      <div class="step reveal reveal-delay-2">
-        <div class="step-num">2</div>
-        <h3 class="step-title">Importa tus proyectos</h3>
-        <p class="step-desc">Migra desde Jira, Asana o Trello con un clic. FlowDesk preserva todo tu historial.</p>
-      </div>
-      <div class="step reveal reveal-delay-3">
-        <div class="step-num">3</div>
-        <h3 class="step-title">Empieza a fluir</h3>
-        <p class="step-desc">Asigna, prioriza y entrega. El dashboard te muestra exactamente qué hacer primero.</p>
-      </div>
+    <div class="feature-card">
+      <div class="feature-icon">🚫</div>
+      <div class="feature-title">Sin alergias ni restricciones</div>
+      <div class="feature-desc">Indica tus alergias o intolerancias (gluten, lactosa, frutos secos…) y nunca volverán a aparecer en tu plan.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🛍️</div>
+      <div class="feature-title">Lista de la compra automática</div>
+      <div class="feature-desc">Genera la lista de tu semana agrupada por supermercado, con cantidades exactas y el coste total estimado.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">Planes que evolucionan</div>
+      <div class="feature-desc">¿Cansado de algo? Regenera un día concreto o todo el plan con un clic. Variedad garantizada cada semana.</div>
     </div>
   </div>
 </section>
 
-<!-- ══ PRICING ══════════════════════════════════════════ -->
-<section id="pricing" class="section">
-  <div class="container">
-    <div class="text-center reveal">
-      <div class="badge">Precios</div>
-      <h2 class="section-title">Simple y <span class="grad-text">transparente</span></h2>
-      <p class="section-sub muted">Sin tarifas ocultas. Cancela cuando quieras.</p>
+<!-- PREVIEW -->
+<section class="preview">
+  <div class="preview-inner">
+    <div>
+      <div class="section-eyebrow">Vista real</div>
+      <h2 class="section-title" style="margin-bottom:16px">Tu semana,<br/>de un vistazo</h2>
+      <p style="font-size:.9rem;color:var(--muted);line-height:1.7;margin-bottom:28px">
+        Visualiza los 7 días de la semana al completo. Desayunos, comidas, cenas y meriendas con sus macros, organizados de forma clara y limpia.
+      </p>
+      <a href="login.html?m=register" class="btn btn-primary">Generar mi primer plan</a>
     </div>
-    <div class="grid-3">
-      <div class="price-card reveal reveal-delay-1">
-        <p class="plan-name">Free</p>
-        <div class="plan-price"><sup>$</sup>0<sub>/mes</sub></div>
-        <p class="plan-desc">Perfecto para equipos pequeños que están empezando.</p>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li>Hasta 3 miembros</li>
-          <li>5 proyectos activos</li>
-          <li>1 GB almacenamiento</li>
-          <li>Integraciones básicas</li>
-          <li class="off">Métricas avanzadas</li>
-          <li class="off">IA Copiloto</li>
-          <li class="off">Soporte prioritario</li>
-        </ul>
-        <a href="#cta-final" class="btn btn-outline btn-plan">Empezar gratis</a>
+    <div class="preview-app">
+      <div class="preview-app-bar">
+        <div class="preview-dot" style="background:#ff5f56"></div>
+        <div class="preview-dot" style="background:#ffbd2e"></div>
+        <div class="preview-dot" style="background:#27c93f"></div>
+        <span class="preview-app-title">Mi Plan · Semana 1</span>
       </div>
-      <div class="price-card featured reveal reveal-delay-2">
-        <span class="popular-tag">Más popular</span>
-        <p class="plan-name">Pro</p>
-        <div class="plan-price"><sup>$</sup>19<sub>/mes por usuario</sub></div>
-        <p class="plan-desc">Para equipos de producto que quieren escalar.</p>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li>Miembros ilimitados</li>
-          <li>Proyectos ilimitados</li>
-          <li>100 GB almacenamiento</li>
-          <li>Todas las integraciones</li>
-          <li>Métricas avanzadas</li>
-          <li>IA Copiloto</li>
-          <li class="off">SLA garantizado</li>
-        </ul>
-        <a href="#cta-final" class="btn btn-primary btn-plan">Empezar prueba gratis</a>
-      </div>
-      <div class="price-card reveal reveal-delay-3">
-        <p class="plan-name">Enterprise</p>
-        <div class="plan-price" style="font-size:2rem">Custom</div>
-        <p class="plan-desc">Seguridad y control para organizaciones grandes.</p>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li>Todo de Pro</li>
-          <li>SSO / SAML</li>
-          <li>Almacenamiento ilimitado</li>
-          <li>Auditoría avanzada</li>
-          <li>SLA 99.99%</li>
-          <li>Onboarding dedicado</li>
-          <li>Soporte 24/7</li>
-        </ul>
-        <a href="#" class="btn btn-outline btn-plan">Hablar con ventas</a>
-      </div>
-    </div>
-
-    <!-- ── COMPARISON TABLE ── -->
-    <div class="compare-wrap reveal">
-      <p class="compare-title" style="margin-top:56px">Comparativa detallada de planes</p>
-      <table class="compare-table">
-        <thead>
-          <tr>
-            <th style="width:38%">Funcionalidad</th>
-            <th>Free</th>
-            <th class="featured-col">Pro</th>
-            <th>Enterprise</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Miembros del equipo</td><td>Hasta 3</td><td class="featured-col">Ilimitados</td><td>Ilimitados</td></tr>
-          <tr><td>Proyectos activos</td><td>5</td><td class="featured-col">Ilimitados</td><td>Ilimitados</td></tr>
-          <tr><td>Almacenamiento</td><td>1 GB</td><td class="featured-col">100 GB</td><td>Ilimitado</td></tr>
-          <tr><td>Tableros (Kanban, Lista, Gantt)</td><td><span class="check-yes">✓</span></td><td class="featured-col"><span class="check-yes">✓</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>Integraciones (Slack, GitHub, Figma…)</td><td>Básicas (3)</td><td class="featured-col">Todas (40+)</td><td>Todas + custom</td></tr>
-          <tr><td>Métricas y reportes avanzados</td><td><span class="check-no">✗</span></td><td class="featured-col"><span class="check-yes">✓</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>IA Copiloto</td><td><span class="check-no">✗</span></td><td class="featured-col"><span class="check-yes">✓</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>Historial de actividad</td><td>7 días</td><td class="featured-col">1 año</td><td>Ilimitado</td></tr>
-          <tr><td>SSO / SAML</td><td><span class="check-no">✗</span></td><td class="featured-col"><span class="check-no">✗</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>Auditoría de accesos</td><td><span class="check-no">✗</span></td><td class="featured-col"><span class="check-no">✗</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>SLA de uptime</td><td>Sin SLA</td><td class="featured-col">99.9%</td><td>99.99%</td></tr>
-          <tr><td>Soporte</td><td>Community</td><td class="featured-col">Email prioritario</td><td>24/7 + CSM dedicado</td></tr>
-          <tr><td>Onboarding asistido</td><td><span class="check-no">✗</span></td><td class="featured-col"><span class="check-no">✗</span></td><td><span class="check-yes">✓</span></td></tr>
-          <tr><td>Facturación anual (ahorra 20%)</td><td>—</td><td class="featured-col"><span class="check-yes">✓</span></td><td><span class="check-yes">✓</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</section>
-
-<!-- ══ TESTIMONIALS ══════════════════════════════════════ -->
-<section id="testimonials" class="section">
-  <div class="container">
-    <div class="text-center reveal">
-      <div class="badge">Testimonios</div>
-      <h2 class="section-title">Equipos que ya <span class="grad-text">fluyen</span></h2>
-      <p class="section-sub muted">No lo decimos nosotros — lo dicen ellos.</p>
-    </div>
-    <div class="grid-3">
-      <div class="testi-card reveal reveal-delay-1">
-        <div class="stars">★★★★★</div>
-        <p class="testi-quote">"FlowDesk redujo nuestras reuniones de status un 70%. El equipo ahora tiene contexto en tiempo real sin interrupciones."</p>
-        <div class="testi-author"><div class="avatar">AM</div><div><div class="author-name">Ana Martínez</div><div class="author-role">Head of Product · Fintechflow</div></div></div>
-      </div>
-      <div class="testi-card reveal reveal-delay-2">
-        <div class="stars">★★★★★</div>
-        <p class="testi-quote">"Migré desde Jira en 15 minutos. El copiloto de IA ya me sugirió dividir 3 tareas que tenían estimaciones irreales."</p>
-        <div class="testi-author"><div class="avatar">DK</div><div><div class="author-name">David Kim</div><div class="author-role">Tech Lead · Remoto desde Seoul</div></div></div>
-      </div>
-      <div class="testi-card reveal reveal-delay-3">
-        <div class="stars">★★★★★</div>
-        <p class="testi-quote">"Por fin una herramienta que no necesita onboarding. Mi equipo de diseño la adoptó sin que yo lo pidiera."</p>
-        <div class="testi-author"><div class="avatar">LR</div><div><div class="author-name">Laura Reyes</div><div class="author-role">Design Manager · StudioNord</div></div></div>
+      <div class="preview-body">
+        <div class="preview-week">
+          <div class="preview-day"><div class="preview-day-name">LUN</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1840 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">MAR</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1795 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">MIÉ</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1860 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">JUE</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1820 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">VIE</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1780 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">SÁB</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1910 kcal</div></div>
+          <div class="preview-day"><div class="preview-day-name">DOM</div><div class="preview-day-col"><div class="preview-meal-pill" style="background:rgba(82,183,136,.15);color:var(--kcal)">☕ Des</div><div class="preview-meal-pill" style="background:rgba(77,157,224,.12);color:var(--protein)">🥗 Com</div><div class="preview-meal-pill" style="background:rgba(232,168,56,.12);color:var(--carbs)">🍎 Mer</div><div class="preview-meal-pill" style="background:rgba(232,104,122,.12);color:var(--fat)">🍽 Cen</div></div><div class="preview-day-total">1850 kcal</div></div>
+        </div>
+        <div style="margin-top:12px;padding:12px;background:var(--surface2);border-radius:10px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+          <div style="font-size:.71rem">
+            <span style="color:var(--muted)">Media: </span>
+            <strong>1836 kcal · </strong>
+            <span style="color:var(--protein)">143g pro · </span>
+            <span style="color:var(--carbs)">198g carbs · </span>
+            <span style="color:var(--fat)">59g grasas</span>
+          </div>
+          <div style="font-size:.71rem;color:var(--muted);margin-left:auto">
+            💰 ~<strong style="color:var(--text)">4,80 €/día</strong>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ FAQ ══════════════════════════════════════════════ -->
-<section id="faq" class="section">
-  <div class="container">
-    <div class="text-center reveal">
-      <div class="badge">FAQ</div>
-      <h2 class="section-title">Preguntas <span class="grad-text">frecuentes</span></h2>
+<!-- PRICING -->
+<section class="pricing" id="precios">
+  <div style="text-align:center;margin-bottom:48px">
+    <div class="section-eyebrow" style="text-align:center">Precios</div>
+    <h2 class="section-title" style="margin-bottom:8px">Simple y transparente</h2>
+    <p style="font-size:.9rem;color:var(--muted)">Sin sorpresas. Empieza gratis, crece cuando lo necesites.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-plan">Gratis</div>
+      <div class="pricing-price">0<sup>€</sup></div>
+      <div class="pricing-period">para siempre</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>1 plan generado al mes</li>
+        <li>Supermercado Mercadona</li>
+        <li>Control de macros básico</li>
+        <li>Lista de la compra</li>
+        <li class="off">Todos los supermercados</li>
+        <li class="off">Planes ilimitados</li>
+        <li class="off">Historial de planes</li>
+      </ul>
+      <a href="login.html?m=register" class="btn-plan btn-plan-outline">Empezar gratis</a>
     </div>
-    <div class="faq-list reveal">
-      <div class="faq-item open">
-        <button class="faq-q">¿Necesito tarjeta de crédito para empezar? <span class="faq-icon">+</span></button>
-        <p class="faq-a">No. El plan Free es gratuito para siempre sin requerir datos de pago. Solo pedimos tu email para crear la cuenta.</p>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">¿Puedo migrar desde Jira o Asana? <span class="faq-icon">+</span></button>
-        <p class="faq-a">Sí. Ofrecemos importadores nativos para Jira, Asana, Trello, Monday y Linear. La migración conserva tareas, comentarios, asignaciones y fechas.</p>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">¿Qué sucede cuando supero el límite del plan Free? <span class="faq-icon">+</span></button>
-        <p class="faq-a">Recibirás una notificación antes de llegar al límite. Nunca bloqueamos tu acceso de forma abrupta. Puedes actualizar a Pro con un clic.</p>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">¿Los datos están seguros? ¿Cumplen con GDPR? <span class="faq-icon">+</span></button>
-        <p class="faq-a">Sí. Estamos certificados SOC 2 Type II. Datos cifrados en tránsito (TLS 1.3) y en reposo (AES-256). Cumplimos con GDPR, CCPA y LGPD.</p>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">¿Hay una app móvil? <span class="faq-icon">+</span></button>
-        <p class="faq-a">Sí. FlowDesk está disponible en iOS y Android con paridad de funcionalidades con la versión web. También funciona como PWA offline.</p>
-      </div>
+    <div class="pricing-card popular">
+      <div class="popular-badge">MÁS POPULAR</div>
+      <div class="pricing-plan">Pro</div>
+      <div class="pricing-price">9<sup>€</sup></div>
+      <div class="pricing-period">usuario / mes</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>Planes ilimitados</li>
+        <li>Todos los supermercados</li>
+        <li>Control de macros avanzado</li>
+        <li>Lista de la compra</li>
+        <li>Historial completo</li>
+        <li>Ajuste automático de objetivos</li>
+        <li class="off">Coach IA conversacional</li>
+      </ul>
+      <a href="login.html?m=register" class="btn-plan btn-plan-solid">Empezar con Pro</a>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-plan">Premium</div>
+      <div class="pricing-price">19<sup>€</sup></div>
+      <div class="pricing-period">usuario / mes</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li>Todo lo de Pro</li>
+        <li>Coach IA conversacional</li>
+        <li>Recetas personalizadas</li>
+        <li>Análisis nutricional avanzado</li>
+        <li>Seguimiento de progreso</li>
+        <li>Soporte prioritario</li>
+        <li>Acceso anticipado a novedades</li>
+      </ul>
+      <a href="login.html?m=register" class="btn-plan btn-plan-outline">Empezar con Premium</a>
     </div>
   </div>
 </section>
 
-<!-- ══ CTA FINAL ═════════════════════════════════════════ -->
-<section id="cta-final" class="section">
-  <div class="container reveal">
-    <div class="cta-box">
-      <div class="badge">Empieza hoy</div>
-      <h2>Tu equipo merece <span class="grad-text">fluir</span></h2>
-      <p>Únete a 12,000+ equipos que ya entregaron más en menos tiempo.<br>Gratis para siempre. Sin tarjeta de crédito.</p>
-      <form class="email-form" onsubmit="handleSubmit(event)">
-        <input class="email-input" type="email" placeholder="tu@empresa.com" required />
-        <button type="submit" class="btn btn-primary">Empezar gratis</button>
-      </form>
-      <p class="cta-note">Al registrarte aceptas nuestros <a href="#" style="color:var(--primary)">Términos de uso</a> y <a href="#" style="color:var(--primary)">Política de privacidad</a>.</p>
-    </div>
-  </div>
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <h2 class="cta-h2">Empieza hoy,<br/>come mejor mañana</h2>
+  <p class="cta-sub">Únete y genera tu primer plan personalizado en menos de 2 minutos.</p>
+  <a href="login.html?m=register" class="btn btn-primary btn-lg">Crear mi plan gratis</a>
+  <p class="cta-note">Sin tarjeta de crédito · Cancela cuando quieras</p>
 </section>
 
-<!-- ══ FOOTER ════════════════════════════════════════════ -->
+<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="#" class="logo">FlowDesk</a>
-        <p>Gestión de equipos remotos diseñada para fluir. Menos fricción, más entrega.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Producto</h4>
-        <ul>
-          <li><a href="#features">Features</a></li>
-          <li><a href="#pricing">Precios</a></li>
-          <li><a href="#">Changelog</a></li>
-          <li><a href="#">Roadmap</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Empresa</h4>
-        <ul>
-          <li><a href="#">Nosotros</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Empleos</a></li>
-          <li><a href="#">Prensa</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <ul>
-          <li><a href="#">Privacidad</a></li>
-          <li><a href="#">Términos</a></li>
-          <li><a href="#">Cookies</a></li>
-          <li><a href="#">Seguridad</a></li>
-        </ul>
-      </div>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">NutrIA</div>
+      <div class="footer-tagline">Tu nutricionista personal con IA</div>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 FlowDesk Inc. Todos los derechos reservados.</span>
-      <div class="social-links">
-        <a href="#" class="social-link" aria-label="Twitter">𝕏</a>
-        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
-        <a href="#" class="social-link" aria-label="GitHub">⌥</a>
-      </div>
+    <div class="footer-links">
+      <a href="#caracteristicas">Características</a>
+      <a href="#precios">Precios</a>
+      <a href="#">Privacidad</a>
+      <a href="#">Términos</a>
+      <a href="#">Contacto</a>
     </div>
+    <div class="footer-copy">© 2026 NutrIA</div>
   </div>
 </footer>
 
 <script>
-  /* ══════════════════════════════════
-     1. DARK / LIGHT MODE
-  ══════════════════════════════════ */
-  const html = document.documentElement;
-  html.setAttribute('data-theme', 'dark');
-
-
-  /* ══════════════════════════════════
-     3. SCROLL REVEAL (IntersectionObserver)
-  ══════════════════════════════════ */
-  const revealObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-  /* ══════════════════════════════════
-     4. ANIMATED COUNTERS
-  ══════════════════════════════════ */
-  function animateCounter(el) {
-    const target   = parseInt(el.dataset.count);
-    const suffix   = el.dataset.suffix || '';
-    const decimal  = el.dataset.decimal === 'true';
-    const duration = 1800;
-    const start    = performance.now();
-    function step(now) {
-      const progress = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - progress, 3);
-      const val  = target * ease;
-      if (decimal) {
-        el.textContent = (val / 10).toFixed(1) + suffix;
-      } else if (target >= 1000) {
-        el.textContent = (val / 1000).toFixed(1) + 'k' + suffix.replace('k+','').replace('+','') + '+';
-      } else {
-        el.textContent = Math.round(val) + suffix;
-      }
-      if (progress < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  const counterObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.querySelectorAll('[data-count]').forEach(animateCounter);
-        counterObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.5 });
-  const heroStats = document.querySelector('.hero-stats');
-  if (heroStats) counterObserver.observe(heroStats);
-
-  /* ══════════════════════════════════
-     5. PROGRESS BARS ANIMATION (mockup)
-  ══════════════════════════════════ */
-  const mockupObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('bars-animated');
-        mockupObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.4 });
-  const mockupEl = document.getElementById('hero-mockup');
-  if (mockupEl) mockupObserver.observe(mockupEl);
-
-  /* ══════════════════════════════════
-     6. DEMO MODAL
-  ══════════════════════════════════ */
-  /* ── Carmen: focus-trap accesible en el modal ── */
-  const demoModal = document.getElementById('demo-modal');
-  const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-
-  function trapFocus(e) {
-    const focusables = [...demoModal.querySelectorAll(FOCUSABLE)].filter(el => !el.disabled);
-    const first = focusables[0];
-    const last  = focusables[focusables.length - 1];
-    if (e.key === 'Tab') {
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-    }
-    if (e.key === 'Escape') closeDemo();
-  }
-
-  function openDemo() {
-    demoModal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    const firstFocusable = demoModal.querySelector(FOCUSABLE);
-    if (firstFocusable) firstFocusable.focus();
-    demoModal.addEventListener('keydown', trapFocus);
-  }
-  function closeDemo() {
-    demoModal.classList.remove('open');
-    document.body.style.overflow = '';
-    demoModal.removeEventListener('keydown', trapFocus);
-  }
-  demoModal.addEventListener('click', e => {
-    if (e.target === demoModal) closeDemo();
-  });
-
-  function switchTab(btn, tabId) {
-    btn.closest('.demo-screen').querySelectorAll('.demo-tab').forEach(t => t.classList.remove('active'));
-    btn.closest('.demo-screen').querySelectorAll('.demo-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(tabId).classList.add('active');
-  }
-
-  /* ══════════════════════════════════
-     7. FAQ ACCORDION
-  ══════════════════════════════════ */
-  document.querySelectorAll('.faq-q').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const item = btn.closest('.faq-item');
-      const isOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-      if (!isOpen) item.classList.add('open');
-    });
-  });
-
-  /* ══════════════════════════════════
-     9. NAV ACTIVE STATE
-  ══════════════════════════════════ */
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
-  const navObserver = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navLinks.forEach(a => a.classList.remove('active'));
-        const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-        if (active) active.classList.add('active');
-      }
-    });
-  }, { threshold: 0.45 });
-  sections.forEach(s => navObserver.observe(s));
-
-  /* ══════════════════════════════════
-     10. HAMBURGER — Marco: clase CSS, respeta tema
-  ══════════════════════════════════ */
-  document.querySelector('.hamburger').addEventListener('click', function () {
-    document.querySelector('.nav-links').classList.toggle('nav-open');
-  });
-
-  /* ══════════════════════════════════
-     11. CTA FORM
-  ══════════════════════════════════ */
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = e.target.querySelector('button');
-    btn.textContent = '¡Listo! Revisa tu email';
-    btn.style.background = 'linear-gradient(135deg,#888,#555)';
-    btn.style.boxShadow  = '0 4px 20px rgba(255,255,255,.15)';
-    btn.disabled = true;
-  }
-
-  /* ══════════════════════════════════
-     12. BACKGROUND PATHS
-     Port de background-paths.tsx
-     Fix flickering: solo stroke-dashoffset,
-     sin animación de stroke-dasharray.
-  ══════════════════════════════════ */
-  (function buildBackgroundPaths() {
-    const NS = 'http://www.w3.org/2000/svg';
-    const styleEl = document.createElement('style');
-    styleEl.id = 'bp-keyframes';
-    document.head.appendChild(styleEl);
-    const sheet = styleEl.sheet;
-
-    function buildFloatingPaths(svgEl, position, prefix) {
-      for (let i = 0; i < 36; i++) {
-        const p = position;
-        const d = `M-${380 - i*5*p} -${189 + i*6}` +
-                  `C-${380 - i*5*p} -${189 + i*6}` +
-                  ` -${312 - i*5*p} ${216 - i*6}` +
-                  ` ${152 - i*5*p} ${343 - i*6}` +
-                  `C${616 - i*5*p} ${470 - i*6}` +
-                  ` ${684 - i*5*p} ${875 - i*6}` +
-                  ` ${684 - i*5*p} ${875 - i*6}`;
-
-        const path = document.createElementNS(NS, 'path');
-        path.setAttribute('d', d);
-        path.setAttribute('stroke', 'currentColor');
-        path.setAttribute('stroke-width', (0.5 + i * 0.03).toFixed(3));
-        path.setAttribute('stroke-opacity', Math.min(0.1 + i * 0.03, 1).toFixed(3));
-        path.setAttribute('fill', 'none');
-        svgEl.appendChild(path);
-
-        const L = path.getTotalLength();
-        if (!L) continue;
-
-        const dur   = (20 + Math.random() * 10).toFixed(2);
-        const delay = (-(Math.random() * 25)).toFixed(2);
-        const name  = `bp-${prefix}-${i}`;
-
-        /*
-          Fix: solo animamos stroke-dashoffset (no dasharray).
-          stroke-dasharray: L → dash=L, gap=L (la mitad del path visible).
-          dashoffset 0 → -2L hace que el dash viaje por el path completo = scrolling effect.
-          Sin animación de dasharray → sin flickering ni saltos visuales.
-        */
-        const Lf = L.toFixed(2);
-        sheet.insertRule(`
-          @keyframes ${name} {
-            0%   { stroke-dashoffset: 0; }
-            100% { stroke-dashoffset: -${(L * 2).toFixed(2)}; }
-          }
-        `, sheet.cssRules.length);
-
-        path.style.strokeDasharray = `${Lf} ${Lf}`;
-        path.style.animation = `${name} ${dur}s ${delay}s linear infinite`;
-      }
-    }
-
-    const svgPos = document.getElementById('bp-pos');
-    const svgNeg = document.getElementById('bp-neg');
-    if (!svgPos || !svgNeg) return;
-
-    buildFloatingPaths(svgPos,  1, 'pos');
-    buildFloatingPaths(svgNeg, -1, 'neg');
-  })();
-
-  /* ══════════════════════════════════
-     BorderTrail — port de border-trail.tsx
-     Inyecta .bt-mask + .bt-dot en cada tarjeta
-  ══════════════════════════════════ */
-  (function initBorderTrails() {
-    const cards = document.querySelectorAll('.feature-card, .price-card, .testi-card');
-    cards.forEach((card, idx) => {
-      card.classList.add('border-trail');
-      const mask = document.createElement('div');
-      mask.className = 'bt-mask';
-      const dot = document.createElement('div');
-
-      // Velocidades distintas por tipo de tarjeta
-      if (card.classList.contains('price-card') && card.classList.contains('featured')) {
-        dot.className = 'bt-dot fast';
-      } else if (card.classList.contains('feature-card')) {
-        dot.className = 'bt-dot slow';
-      } else {
-        dot.className = 'bt-dot';
-      }
-
-      // Stagger: cada tarjeta arranca en una fase distinta
-      dot.style.animationDelay = `${-(idx * 1.3).toFixed(1)}s`;
-      mask.appendChild(dot);
-      card.appendChild(mask);
-    });
-  })();
-
-  /* ══════════════════════════════════
-     13. SERVICE WORKER (PWA)
-  ══════════════════════════════════ */
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
+document.getElementById('hamburger').addEventListener('click', function(){
+  document.getElementById('nav-links').classList.toggle('open');
+});
 </script>
 </body>
 </html>
