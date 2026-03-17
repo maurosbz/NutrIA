@@ -275,17 +275,44 @@
       position: relative;
       overflow: hidden;
     }
+
+    /* ── BACKGROUND PATHS (port de background-paths.tsx) ── */
+    .hero-bg-paths {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 0;
+    }
+    .hero-bg-paths svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      /* dark: paths blancos sutiles, como dark:text-white del componente original */
+      color: rgba(255,255,255,1);
+    }
+    [data-theme="light"] .hero-bg-paths svg {
+      /* light: paths oscuros, como text-slate-950 del componente original */
+      color: rgba(15,23,42,1);
+    }
+
+    /* El gradiente pasa a ser un overlay encima de los paths */
     .hero-bg {
       position: absolute; inset: 0;
+      z-index: 1;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.22) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,101,132,.12) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,101,132,.10) 0%, transparent 60%);
+      pointer-events: none;
     }
     [data-theme="light"] .hero-bg {
       background:
-        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.1) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,101,132,.06) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(108,99,255,.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 80% 80%, rgba(255,101,132,.04) 0%, transparent 60%);
     }
+    /* El contenido del hero queda sobre paths y gradiente */
+    .hero-grid { position: relative; z-index: 2; }
     .hero-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -964,6 +991,11 @@
 
 <!-- ══ HERO ════════════════════════════════════════════ -->
 <section id="hero" class="section">
+  <!-- background-paths.tsx port: dos capas de paths (position=1 y position=-1) -->
+  <div class="hero-bg-paths" aria-hidden="true">
+    <svg id="bp-pos" viewBox="0 0 696 316" fill="none" preserveAspectRatio="xMidYMid slice"><title>Background Paths</title></svg>
+    <svg id="bp-neg" viewBox="0 0 696 316" fill="none" preserveAspectRatio="xMidYMid slice"><title>Background Paths</title></svg>
+  </div>
   <div class="hero-bg"></div>
   <div class="container hero-grid">
     <div class="hero-content reveal">
@@ -1662,7 +1694,110 @@
   }
 
   /* ══════════════════════════════════
-     12. SERVICE WORKER (PWA)
+     12. BACKGROUND PATHS
+     Port de background-paths.tsx
+     framer-motion pathLength/pathOffset →
+     stroke-dasharray / stroke-dashoffset
+     via Web Animations API
+  ══════════════════════════════════ */
+  (function buildBackgroundPaths() {
+    const NS = 'http://www.w3.org/2000/svg';
+
+    /**
+     * Replica FloatingPaths({ position })
+     * Misma fórmula de paths que el componente React original.
+     */
+    function buildFloatingPaths(svgEl, position) {
+      const paths = Array.from({ length: 36 }, (_, i) => {
+        const p = position;
+        return {
+          id: i,
+          d: [
+            `M-${380 - i*5*p} -${189 + i*6}`,
+            `C-${380 - i*5*p} -${189 + i*6}`,
+            `-${312 - i*5*p} ${216 - i*6}`,
+            `${152 - i*5*p} ${343 - i*6}`,
+            `C${616 - i*5*p} ${470 - i*6}`,
+            `${684 - i*5*p} ${875 - i*6}`,
+            `${684 - i*5*p} ${875 - i*6}`,
+          ].join(' '),
+          strokeWidth:   0.5 + i * 0.03,
+          strokeOpacity: 0.1 + i * 0.03,   // mismo valor que strokeOpacity del original
+        };
+      });
+
+      paths.forEach(({ id, d, strokeWidth, strokeOpacity }) => {
+        const path = document.createElementNS(NS, 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('stroke', 'currentColor');
+        path.setAttribute('stroke-width', String(strokeWidth));
+        path.setAttribute('stroke-opacity', String(Math.min(strokeOpacity, 1)));
+        path.setAttribute('fill', 'none');
+        svgEl.appendChild(path);
+      });
+
+      /* getTotalLength() requiere el elemento en el DOM —
+         el SVG ya está en el DOM al llamar esta función */
+      const pathEls = svgEl.querySelectorAll('path');
+      pathEls.forEach((path, i) => {
+        const L = path.getTotalLength();
+        if (!L) return;
+
+        const duration = (20 + Math.random() * 10) * 1000; // 20-30s igual que original
+
+        /*
+          Traducción de framer-motion:
+            initial : pathLength=0.3, opacity=0.6
+            animate : pathLength=1,  opacity=[0.3,0.6,0.3], pathOffset=[0,1,0]
+
+          En SVG:
+            pathLength  → stroke-dasharray: `${pathLen * L} ${(1-pathLen) * L}`
+            pathOffset  → stroke-dashoffset: `-${offset * L}`
+
+          Keyframes:
+            0%:   dasharray=0.3L / 0.7L,  offset=0,    opacity=0.6
+            50%:  dasharray=1L / 0,       offset=-L,   opacity=0.3
+            100%: dasharray=1L / 0,       offset=0,    opacity=0.6
+        */
+        path.animate(
+          [
+            {
+              strokeDasharray:  `${0.3 * L} ${0.7 * L}`,
+              strokeDashoffset: '0',
+              opacity: '0.6',
+            },
+            {
+              strokeDasharray:  `${L} 0`,
+              strokeDashoffset: `-${L}`,
+              opacity: '0.3',
+            },
+            {
+              strokeDasharray:  `${L} 0`,
+              strokeDashoffset: '0',
+              opacity: '0.6',
+            },
+          ],
+          {
+            duration,
+            iterations: Infinity,
+            easing: 'linear',
+            delay: -(Math.random() * duration), // stagger aleatorio para que no arranquen sincronizados
+          }
+        );
+      });
+    }
+
+    /* Esperar a que el DOM esté listo y el SVG tenga dimensiones */
+    const svgPos = document.getElementById('bp-pos');
+    const svgNeg = document.getElementById('bp-neg');
+    if (!svgPos || !svgNeg) return;
+
+    buildFloatingPaths(svgPos,  1);   // FloatingPaths position={1}
+    buildFloatingPaths(svgNeg, -1);   // FloatingPaths position={-1}
+  })();
+
+  /* ══════════════════════════════════
+     13. SERVICE WORKER (PWA)
   ══════════════════════════════════ */
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
