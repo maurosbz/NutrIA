@@ -1885,64 +1885,79 @@ function generatePlan(opts){
   const dairyList  = byCat('dairy');
 
   const pick = (arr, offset) => arr.length>0 ? arr[((offset%arr.length)+arr.length)%arr.length] : null;
+  // Grams needed to reach targetKcal for a food, clamped to [minG, maxG]
+  const gFor = (food, targetKcal, minG, maxG) =>
+    Math.max(minG, Math.min(maxG, Math.round(targetKcal / (food.cal / 100))));
+  // Calories contributed by a fixed-gram portion
+  const fxKcal = (food, grams) => food ? food.cal * grams / 100 : 0;
 
   const planDays = DAYS.map((dayName, i)=>{
     const meals = {};
 
     if(cfg.slots.includes('desayuno')){
-      const pct = cfg.pcts.desayuno;
+      const mKcal = targetCalories * cfg.pcts.desayuno;
       const bfGrainPool = carbsList.filter(f=>!NON_BREAKFAST_CARBS.has(f.id));
       const bfGrain = pick(bfGrainPool.length > 0 ? bfGrainPool : carbsList, i);
       const bfDairy = pick(dairyList, i);
       const bfFruit = pick(fruitList, i);
+      // Fruit fixed at 150g; remaining split 50/50 between grain and dairy
+      const rem = Math.max(0, mKcal - fxKcal(bfFruit, 150));
       meals.desayuno = [];
-      if(bfGrain){ const g=Math.max(40,Math.min(100,Math.round(targetCalories*pct*.40/(bfGrain.cal/100)))); meals.desayuno.push({foodId:bfGrain.id,grams:g}) }
-      if(bfDairy){ const g=Math.max(100,Math.min(250,Math.round(targetCalories*pct*.45/(bfDairy.cal/100)))); meals.desayuno.push({foodId:bfDairy.id,grams:g}) }
-      if(bfFruit) meals.desayuno.push({foodId:bfFruit.id,grams:150});
+      if(bfGrain) meals.desayuno.push({foodId:bfGrain.id, grams: gFor(bfGrain, rem*.50, 30, 200)});
+      if(bfDairy) meals.desayuno.push({foodId:bfDairy.id, grams: gFor(bfDairy, rem*.50, 80, 500)});
+      if(bfFruit) meals.desayuno.push({foodId:bfFruit.id, grams:150});
     }
 
     if(cfg.slots.includes('almuerzo')){
+      const mKcal = targetCalories * cfg.pcts.almuerzo;
       const alDairy = pick(dairyList, i+2);
       const alFruit = pick(fruitList, i+2);
       meals.almuerzo = [];
-      if(alDairy) meals.almuerzo.push({foodId:alDairy.id,grams:125});
-      if(alFruit) meals.almuerzo.push({foodId:alFruit.id,grams:120});
+      if(alDairy) meals.almuerzo.push({foodId:alDairy.id, grams: gFor(alDairy, mKcal*.50, 80, 300)});
+      if(alFruit) meals.almuerzo.push({foodId:alFruit.id, grams: gFor(alFruit, mKcal*.50, 60, 250)});
     }
 
     if(cfg.slots.includes('comida')){
-      const pct = cfg.pcts.comida;
+      const mKcal = targetCalories * cfg.pcts.comida;
       const lProt = pick(proteins, i*2);
       const lCarb = pick(carbsList, i+1);
       const lVeg1 = pick(veggies, i);
       const lVeg2 = pick(veggies, i+3);
       const lFat  = pick(fatList, i);
+      const hasVeg2 = lVeg2 && lVeg2.id !== lVeg1?.id;
+      // Veggies are fixed portions; remaining distributed protein 50%, carb 40%, fat 10%
+      const rem = Math.max(0, mKcal - fxKcal(lVeg1,150) - (hasVeg2 ? fxKcal(lVeg2,100) : 0));
       meals.comida = [];
-      if(lProt){ const g=Math.max(100,Math.min(300,Math.round(targetCalories*pct*.45/(lProt.cal/100)))); meals.comida.push({foodId:lProt.id,grams:g}) }
-      if(lCarb){ const g=Math.max(50,Math.min(180,Math.round(targetCalories*pct*.35/(lCarb.cal/100)))); meals.comida.push({foodId:lCarb.id,grams:g}) }
-      if(lVeg1) meals.comida.push({foodId:lVeg1.id,grams:150});
-      if(lVeg2&&lVeg2.id!==lVeg1?.id) meals.comida.push({foodId:lVeg2.id,grams:100});
-      if(lFat) meals.comida.push({foodId:lFat.id,grams:12});
+      if(lProt) meals.comida.push({foodId:lProt.id, grams: gFor(lProt, rem*.50, 80, 600)});
+      if(lCarb) meals.comida.push({foodId:lCarb.id, grams: gFor(lCarb, rem*.40, 40, 400)});
+      if(lVeg1) meals.comida.push({foodId:lVeg1.id, grams:150});
+      if(hasVeg2) meals.comida.push({foodId:lVeg2.id, grams:100});
+      if(lFat)  meals.comida.push({foodId:lFat.id, grams: gFor(lFat, rem*.10, 5, 40)});
     }
 
     if(cfg.slots.includes('merienda')){
+      const mKcal = targetCalories * cfg.pcts.merienda;
       const merFruit = pick(fruitList, i+4);
       const merDairy = pick(dairyList, i+3);
       meals.merienda = [];
-      if(merFruit) meals.merienda.push({foodId:merFruit.id,grams:150});
-      if(merDairy) meals.merienda.push({foodId:merDairy.id,grams:100});
+      if(merFruit) meals.merienda.push({foodId:merFruit.id, grams: gFor(merFruit, mKcal*.50, 60, 250)});
+      if(merDairy) meals.merienda.push({foodId:merDairy.id, grams: gFor(merDairy, mKcal*.50, 80, 300)});
     }
 
     if(cfg.slots.includes('cena')){
-      const pct = cfg.pcts.cena;
+      const mKcal = targetCalories * cfg.pcts.cena;
       const cenProt = pick(proteins, i*2+1);
       const cenVeg1 = pick(veggies, i+2);
       const cenVeg2 = pick(veggies, i+5);
       const cenFat  = pick(fatList, i+1);
+      const hasVeg2c = cenVeg2 && cenVeg2.id !== cenVeg1?.id;
+      // Veggies fixed; remaining split protein 85%, fat 15%
+      const rem = Math.max(0, mKcal - fxKcal(cenVeg1,200) - (hasVeg2c ? fxKcal(cenVeg2,120) : 0));
       meals.cena = [];
-      if(cenProt){ const g=Math.max(100,Math.min(300,Math.round(targetCalories*pct*.55/(cenProt.cal/100)))); meals.cena.push({foodId:cenProt.id,grams:g}) }
-      if(cenVeg1) meals.cena.push({foodId:cenVeg1.id,grams:200});
-      if(cenVeg2&&cenVeg2.id!==cenVeg1?.id) meals.cena.push({foodId:cenVeg2.id,grams:120});
-      if(cenFat) meals.cena.push({foodId:cenFat.id,grams:10});
+      if(cenProt) meals.cena.push({foodId:cenProt.id, grams: gFor(cenProt, rem*.85, 80, 600)});
+      if(cenVeg1) meals.cena.push({foodId:cenVeg1.id, grams:200});
+      if(hasVeg2c) meals.cena.push({foodId:cenVeg2.id, grams:120});
+      if(cenFat)  meals.cena.push({foodId:cenFat.id,  grams: gFor(cenFat, rem*.15, 5, 40)});
     }
 
     return { dayName, meals };
