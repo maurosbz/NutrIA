@@ -1695,105 +1695,100 @@
 
   /* ══════════════════════════════════
      12. BACKGROUND PATHS
-     Port de background-paths.tsx
-     framer-motion pathLength/pathOffset →
-     stroke-dasharray / stroke-dashoffset
-     via Web Animations API
+     Port fiel de background-paths.tsx
+     Fix: CSS @keyframes inyectados dinámicamente
+     (Web Animations API no interpola stroke-dasharray
+     como strings en todos los browsers)
   ══════════════════════════════════ */
   (function buildBackgroundPaths() {
     const NS = 'http://www.w3.org/2000/svg';
 
-    /**
-     * Replica FloatingPaths({ position })
-     * Misma fórmula de paths que el componente React original.
-     */
-    function buildFloatingPaths(svgEl, position) {
-      const paths = Array.from({ length: 36 }, (_, i) => {
-        const p = position;
-        return {
-          id: i,
-          d: [
-            `M-${380 - i*5*p} -${189 + i*6}`,
-            `C-${380 - i*5*p} -${189 + i*6}`,
-            `-${312 - i*5*p} ${216 - i*6}`,
-            `${152 - i*5*p} ${343 - i*6}`,
-            `C${616 - i*5*p} ${470 - i*6}`,
-            `${684 - i*5*p} ${875 - i*6}`,
-            `${684 - i*5*p} ${875 - i*6}`,
-          ].join(' '),
-          strokeWidth:   0.5 + i * 0.03,
-          strokeOpacity: 0.1 + i * 0.03,   // mismo valor que strokeOpacity del original
-        };
-      });
+    // Hoja de estilo dedicada para los @keyframes generados
+    const styleEl = document.createElement('style');
+    styleEl.id = 'bp-keyframes';
+    document.head.appendChild(styleEl);
+    const sheet = styleEl.sheet;
 
-      paths.forEach(({ id, d, strokeWidth, strokeOpacity }) => {
+    /**
+     * Replica exacta de FloatingPaths({ position }) del componente React.
+     * prefix: 'pos' | 'neg' — para nombres únicos de @keyframes
+     */
+    function buildFloatingPaths(svgEl, position, prefix) {
+      for (let i = 0; i < 36; i++) {
+        const p = position;
+
+        // ── Misma fórmula de path que el componente original ──
+        const d = `M-${380 - i*5*p} -${189 + i*6}` +
+                  `C-${380 - i*5*p} -${189 + i*6}` +
+                  ` -${312 - i*5*p} ${216 - i*6}` +
+                  ` ${152 - i*5*p} ${343 - i*6}` +
+                  `C${616 - i*5*p} ${470 - i*6}` +
+                  ` ${684 - i*5*p} ${875 - i*6}` +
+                  ` ${684 - i*5*p} ${875 - i*6}`;
+
+        const strokeWidth   = 0.5 + i * 0.03;
+        const strokeOpacity = Math.min(0.1 + i * 0.03, 1); // strokeOpacity del original
+
         const path = document.createElementNS(NS, 'path');
         path.setAttribute('d', d);
         path.setAttribute('stroke', 'currentColor');
-        path.setAttribute('stroke-width', String(strokeWidth));
-        path.setAttribute('stroke-opacity', String(Math.min(strokeOpacity, 1)));
+        path.setAttribute('stroke-width', strokeWidth.toFixed(3));
+        path.setAttribute('stroke-opacity', strokeOpacity.toFixed(3));
         path.setAttribute('fill', 'none');
         svgEl.appendChild(path);
-      });
 
-      /* getTotalLength() requiere el elemento en el DOM —
-         el SVG ya está en el DOM al llamar esta función */
-      const pathEls = svgEl.querySelectorAll('path');
-      pathEls.forEach((path, i) => {
+        // getTotalLength() es puramente geométrico — no necesita layout
         const L = path.getTotalLength();
-        if (!L) return;
+        if (!L) continue;
 
-        const duration = (20 + Math.random() * 10) * 1000; // 20-30s igual que original
+        const dur   = (20 + Math.random() * 10).toFixed(2); // 20-30s como el original
+        const delay = (-(Math.random() * 30)).toFixed(2);    // stagger: ya llevan N segundos corriendo
+        const name  = `bp-${prefix}-${i}`;
 
         /*
-          Traducción de framer-motion:
-            initial : pathLength=0.3, opacity=0.6
-            animate : pathLength=1,  opacity=[0.3,0.6,0.3], pathOffset=[0,1,0]
+          Traducción de framer-motion → CSS @keyframes:
 
-          En SVG:
-            pathLength  → stroke-dasharray: `${pathLen * L} ${(1-pathLen) * L}`
-            pathOffset  → stroke-dashoffset: `-${offset * L}`
+          Original React:
+            initial={{ pathLength: 0.3, opacity: 0.6 }}
+            animate={{
+              pathLength: 1,
+              opacity: [0.3, 0.6, 0.3],
+              pathOffset: [0, 1, 0],
+            }}
+
+          SVG equivalente:
+            pathLength  → stroke-dasharray: "visibleSeg gap"
+                           donde visibleSeg = pathLength * L
+            pathOffset  → stroke-dashoffset: -(pathOffset * L)
+            opacity     → opacity en el keyframe
 
           Keyframes:
-            0%:   dasharray=0.3L / 0.7L,  offset=0,    opacity=0.6
-            50%:  dasharray=1L / 0,       offset=-L,   opacity=0.3
-            100%: dasharray=1L / 0,       offset=0,    opacity=0.6
+            0%  : dasharray=0.3L/0.7L,  dashoffset=0,   opacity=0.6
+            50% : dasharray=L/~0,       dashoffset=-L,  opacity=0.3
+            100%: dasharray=L/~0,       dashoffset=0,   opacity=0.6
         */
-        path.animate(
-          [
-            {
-              strokeDasharray:  `${0.3 * L} ${0.7 * L}`,
-              strokeDashoffset: '0',
-              opacity: '0.6',
-            },
-            {
-              strokeDasharray:  `${L} 0`,
-              strokeDashoffset: `-${L}`,
-              opacity: '0.3',
-            },
-            {
-              strokeDasharray:  `${L} 0`,
-              strokeDashoffset: '0',
-              opacity: '0.6',
-            },
-          ],
-          {
-            duration,
-            iterations: Infinity,
-            easing: 'linear',
-            delay: -(Math.random() * duration), // stagger aleatorio para que no arranquen sincronizados
+        const da03  = (0.3 * L).toFixed(2);
+        const da07  = (0.7 * L).toFixed(2);
+        const daFull = L.toFixed(2);
+
+        sheet.insertRule(`
+          @keyframes ${name} {
+            0%   { stroke-dasharray: ${da03} ${da07}; stroke-dashoffset: 0;       opacity: 0.6; }
+            50%  { stroke-dasharray: ${daFull} 1;     stroke-dashoffset: -${daFull}; opacity: 0.3; }
+            100% { stroke-dasharray: ${daFull} 1;     stroke-dashoffset: 0;       opacity: 0.6; }
           }
-        );
-      });
+        `, sheet.cssRules.length);
+
+        path.style.animation = `${name} ${dur}s ${delay}s linear infinite`;
+      }
     }
 
-    /* Esperar a que el DOM esté listo y el SVG tenga dimensiones */
     const svgPos = document.getElementById('bp-pos');
     const svgNeg = document.getElementById('bp-neg');
     if (!svgPos || !svgNeg) return;
 
-    buildFloatingPaths(svgPos,  1);   // FloatingPaths position={1}
-    buildFloatingPaths(svgNeg, -1);   // FloatingPaths position={-1}
+    buildFloatingPaths(svgPos,  1, 'pos');  // FloatingPaths position={1}
+    buildFloatingPaths(svgNeg, -1, 'neg');  // FloatingPaths position={-1}
   })();
 
   /* ══════════════════════════════════
