@@ -281,6 +281,38 @@
       font-size:.6rem; font-weight:700;
     }
 
+    /* Multi-assignee picker */
+    .assignee-picker {
+      display:flex; flex-wrap:wrap; gap:8px; padding:4px 0;
+    }
+    .assignee-chip {
+      display:flex; align-items:center; gap:7px;
+      padding:7px 12px 7px 8px; border-radius:10px;
+      border:1.5px solid var(--border); background:var(--surface2);
+      cursor:pointer; transition:all .15s; user-select:none;
+    }
+    .assignee-chip:hover { border-color:var(--border-md) }
+    .assignee-chip.selected { border-color:var(--text); background:var(--surface3) }
+    .chip-initials {
+      width:22px; height:22px; border-radius:50%;
+      background:var(--surface3);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.6rem; font-weight:700; flex-shrink:0;
+    }
+    .assignee-chip.selected .chip-initials { background:var(--text); color:var(--bg) }
+    .chip-name { font-size:.8rem; font-weight:500 }
+    /* Avatar stack for multiple assignees */
+    .avatar-stack { display:flex; align-items:center }
+    .avatar-stack .mini-avatar { margin-left:-6px; border:1.5px solid var(--surface2) }
+    .avatar-stack .mini-avatar:first-child { margin-left:0 }
+    .avatar-stack .avatar-more {
+      width:24px; height:24px; border-radius:50%;
+      background:var(--surface3); border:1.5px solid var(--surface2);
+      display:flex; align-items:center; justify-content:center;
+      font-size:.58rem; font-weight:700; color:var(--muted);
+      margin-left:-6px;
+    }
+
     /* ── Activity ── */
     .activity-item {
       display:flex; gap:14px; padding:12px 22px;
@@ -909,7 +941,7 @@
         </div>
       </div>
       <div class="field"><label>Asignado a</label>
-        <select id="task-assignee"><option value="">Sin asignar</option></select>
+        <div class="assignee-picker" id="task-assignee-picker"></div>
       </div>
       <div class="field"><label>Etiquetas (separadas por coma)</label>
         <input type="text" id="task-tags" placeholder="UI, Backend, Bug..."/>
@@ -969,14 +1001,14 @@ const DB_KEY = 'flowdesk_db';
 
 const SEED = {
   tasks: [
-    {id:'t1',title:'Rediseñar flujo de onboarding',description:'Simplificar los pasos del proceso de registro para mejorar la tasa de activación.',status:'in-progress',priority:'high',assignee:'u1',due:'2026-03-25',tags:['UI','UX'],createdAt:ts(-2)},
-    {id:'t2',title:'API de notificaciones push',description:'Implementar el sistema de notificaciones en tiempo real usando WebSockets.',status:'done',priority:'high',assignee:'u2',due:'2026-03-20',tags:['Backend','API'],createdAt:ts(-5)},
-    {id:'t3',title:'Tests de integración — módulo de pagos',description:'Cubrir los endpoints críticos del sistema de cobros con tests automatizados.',status:'blocked',priority:'high',assignee:'u2',due:'2026-03-22',tags:['QA'],createdAt:ts(-3)},
-    {id:'t4',title:'Nuevos iconos de navegación lateral',description:'Reemplazar los iconos actuales con la nueva librería del design system.',status:'todo',priority:'medium',assignee:'u3',due:'2026-03-28',tags:['Design'],createdAt:ts(-1)},
-    {id:'t5',title:'Migración a base de datos v2',description:'Actualizar el esquema de la base de datos y ejecutar los scripts de migración.',status:'done',priority:'high',assignee:'u2',due:'2026-03-18',tags:['Backend','DB'],createdAt:ts(-7)},
-    {id:'t6',title:'Documentación del API REST',description:'Generar documentación Swagger actualizada para todos los endpoints públicos.',status:'todo',priority:'low',assignee:'u1',due:'2026-04-02',tags:['Docs'],createdAt:ts(-1)},
-    {id:'t7',title:'Dashboard de métricas — nueva vista',description:'Añadir gráfico de burndown y velocidad del equipo al panel principal.',status:'in-progress',priority:'medium',assignee:'u3',due:'2026-03-26',tags:['UI','Feature'],createdAt:ts(-4)},
-    {id:'t8',title:'Fix: formulario de registro en Safari',description:'El botón de envío no funciona en Safari 17 por un conflicto con el evento submit.',status:'todo',priority:'high',assignee:'u2',due:'2026-03-21',tags:['Bug'],createdAt:ts(-1)},
+    {id:'t1',title:'Rediseñar flujo de onboarding',description:'Simplificar los pasos del proceso de registro para mejorar la tasa de activación.',status:'in-progress',priority:'high',assignees:['u1'],due:'2026-03-25',tags:['UI','UX'],createdAt:ts(-2)},
+    {id:'t2',title:'API de notificaciones push',description:'Implementar el sistema de notificaciones en tiempo real usando WebSockets.',status:'done',priority:'high',assignees:['u2'],due:'2026-03-20',tags:['Backend','API'],createdAt:ts(-5)},
+    {id:'t3',title:'Tests de integración — módulo de pagos',description:'Cubrir los endpoints críticos del sistema de cobros con tests automatizados.',status:'blocked',priority:'high',assignees:['u2'],due:'2026-03-22',tags:['QA'],createdAt:ts(-3)},
+    {id:'t4',title:'Nuevos iconos de navegación lateral',description:'Reemplazar los iconos actuales con la nueva librería del design system.',status:'todo',priority:'medium',assignees:['u3'],due:'2026-03-28',tags:['Design'],createdAt:ts(-1)},
+    {id:'t5',title:'Migración a base de datos v2',description:'Actualizar el esquema de la base de datos y ejecutar los scripts de migración.',status:'done',priority:'high',assignees:['u2'],due:'2026-03-18',tags:['Backend','DB'],createdAt:ts(-7)},
+    {id:'t6',title:'Documentación del API REST',description:'Generar documentación Swagger actualizada para todos los endpoints públicos.',status:'todo',priority:'low',assignees:['u1'],due:'2026-04-02',tags:['Docs'],createdAt:ts(-1)},
+    {id:'t7',title:'Dashboard de métricas — nueva vista',description:'Añadir gráfico de burndown y velocidad del equipo al panel principal.',status:'in-progress',priority:'medium',assignees:['u3'],due:'2026-03-26',tags:['UI','Feature'],createdAt:ts(-4)},
+    {id:'t8',title:'Fix: formulario de registro en Safari',description:'El botón de envío no funciona en Safari 17 por un conflicto con el evento submit.',status:'todo',priority:'high',assignees:['u2'],due:'2026-03-21',tags:['Bug'],createdAt:ts(-1)},
   ],
   users: [
     {id:'u1',name:'Ana Martínez',email:'ana@fintechflow.com',role:'Head of Product',initials:'AM'},
@@ -998,7 +1030,20 @@ const SEED = {
 };
 
 function ts(d){return new Date(Date.now()+d*86400000).toISOString()}
-function loadDB(){try{return JSON.parse(localStorage.getItem(DB_KEY))||JSON.parse(JSON.stringify(SEED))}catch{return JSON.parse(JSON.stringify(SEED))}}
+function loadDB(){
+  try{
+    const raw = JSON.parse(localStorage.getItem(DB_KEY)) || JSON.parse(JSON.stringify(SEED));
+    // Migrate old single assignee → assignees array
+    raw.tasks = (raw.tasks||[]).map(t => {
+      if(t.assignee !== undefined && !t.assignees){
+        return {...t, assignees: t.assignee ? [t.assignee] : [], assignee: undefined};
+      }
+      if(!t.assignees) t.assignees = [];
+      return t;
+    });
+    return raw;
+  } catch { return JSON.parse(JSON.stringify(SEED)); }
+}
 function saveDB(db){localStorage.setItem(DB_KEY,JSON.stringify(db))}
 function resetToSeedData(){saveDB(JSON.parse(JSON.stringify(SEED)));db=loadDB();renderAll();toast('Datos reseteados')}
 
@@ -1015,7 +1060,19 @@ function statusColor(s){return{'in-progress':'var(--progress)',blocked:'var(--bl
 function prioLabel(p){return{high:'Alta',medium:'Media',low:'Baja'}[p]||p}
 function prioClass(p){return{high:'prio-high',medium:'prio-med',low:'prio-low'}[p]||''}
 function getUserById(id){return db.users.find(u=>u.id===id)}
+function getUsersByIds(ids){ return (ids||[]).map(id=>db.users.find(u=>u.id===id)).filter(Boolean) }
 function initials(name){return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+
+function renderAvatarStack(ids, limit=3){
+  const users = getUsersByIds(ids);
+  if(!users.length) return '';
+  const shown = users.slice(0, limit);
+  const extra = users.length - shown.length;
+  return `<div class="avatar-stack">
+    ${shown.map(u=>`<div class="mini-avatar" title="${escHtml(u.name)}">${u.initials}</div>`).join('')}
+    ${extra > 0 ? `<div class="avatar-more">+${extra}</div>` : ''}
+  </div>`;
+}
 
 function toast(msg, type='success'){
   const el = document.createElement('div');
@@ -1155,10 +1212,9 @@ function openNewTask(defaultStatus){
   document.getElementById('task-status').value = defaultStatus||'todo';
   document.getElementById('task-due').value = '';
   document.getElementById('task-tags').value = '';
-  document.getElementById('task-assignee').value = '';
   document.querySelectorAll('.prio-opt').forEach(o=>o.classList.remove('selected'));
   document.querySelector('.prio-opt[data-prio="medium"]').classList.add('selected');
-  populateAssigneeSelect();
+  populateAssigneeSelect([]);
   openModal('modal-task','task-title');
 }
 
@@ -1172,21 +1228,33 @@ function openEditTask(id){
   document.getElementById('task-status').value = t.status;
   document.getElementById('task-due').value = t.due||'';
   document.getElementById('task-tags').value = (t.tags||[]).join(', ');
-  populateAssigneeSelect();
-  document.getElementById('task-assignee').value = t.assignee||'';
+  populateAssigneeSelect(t.assignees||[]);
   document.querySelectorAll('.prio-opt').forEach(o=>o.classList.remove('selected'));
   document.querySelector(`.prio-opt[data-prio="${t.priority||'medium'}"]`)?.classList.add('selected');
   openModal('modal-task','task-title');
 }
 
-function populateAssigneeSelect(){
-  const sel = document.getElementById('task-assignee');
-  sel.innerHTML = '<option value="">Sin asignar</option>';
-  db.users.forEach(u=>{
-    const o = document.createElement('option');
-    o.value = u.id; o.textContent = u.name;
-    sel.appendChild(o);
-  });
+function populateAssigneeSelect(selectedIds){
+  const picker = document.getElementById('task-assignee-picker');
+  if(!db.users.length){
+    picker.innerHTML = '<span style="font-size:.8rem;color:var(--muted)">Sin miembros en el equipo</span>';
+    return;
+  }
+  picker.innerHTML = db.users.map(u => {
+    const sel = selectedIds && selectedIds.includes(u.id);
+    return `<div class="assignee-chip ${sel?'selected':''}" data-uid="${u.id}" onclick="toggleAssigneeChip(this)">
+      <div class="chip-initials">${u.initials}</div>
+      <span class="chip-name">${escHtml(u.name)}</span>
+    </div>`;
+  }).join('');
+}
+
+function toggleAssigneeChip(el){
+  el.classList.toggle('selected');
+}
+
+function getSelectedAssignees(){
+  return [...document.querySelectorAll('.assignee-chip.selected')].map(c=>c.dataset.uid);
 }
 
 function saveTask(){
@@ -1200,7 +1268,7 @@ function saveTask(){
     description: document.getElementById('task-desc').value.trim(),
     status: document.getElementById('task-status').value,
     priority: prio,
-    assignee: document.getElementById('task-assignee').value||null,
+    assignees: getSelectedAssignees(),
     due: document.getElementById('task-due').value||null,
     tags: document.getElementById('task-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
     createdAt: isNew ? new Date().toISOString() : db.tasks.find(t=>t.id===id)?.createdAt || new Date().toISOString(),
@@ -1232,7 +1300,7 @@ function deleteTask(id){
 function openTaskDetail(id){
   const t = db.tasks.find(t=>t.id===id);
   if(!t) return;
-  const user = getUserById(t.assignee);
+  const taskUsers = getUsersByIds(t.assignees);
   const done = t.status === 'done';
   document.getElementById('detail-title').textContent = t.title;
   document.getElementById('detail-edit-btn').onclick = ()=>{ closeModal('modal-detail'); openEditTask(id) };
@@ -1247,8 +1315,7 @@ function openTaskDetail(id){
       <div>
         <div style="font-size:.65rem;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.07em">Asignado a</div>
         <div style="display:flex;align-items:center;gap:8px">
-          <div class="mini-avatar">${user ? initials(user.name) : '?'}</div>
-          <span style="font-size:.85rem">${user ? escHtml(user.name) : 'Sin asignar'}</span>
+          ${taskUsers.length ? renderAvatarStack(t.assignees) + `<span style="font-size:.85rem;margin-left:6px">${taskUsers.map(u=>escHtml(u.name)).join(', ')}</span>` : '<span style="font-size:.85rem;color:var(--muted)">Sin asignar</span>'}
         </div>
       </div>
       <div>
@@ -1299,7 +1366,7 @@ function openEditUser(id){
 function deleteUser(id){
   const u = db.users.find(u=>u.id===id);
   db.users = db.users.filter(u=>u.id!==id);
-  db.tasks = db.tasks.map(t=>t.assignee===id ? {...t,assignee:null} : t);
+  db.tasks = db.tasks.map(t=>({...t, assignees: (t.assignees||[]).filter(aid=>aid!==id)}));
   saveDB(db);
   renderAll();
   toast(`${u?.name||'Usuario'} eliminado`);
@@ -1334,14 +1401,15 @@ function renderDashboard(){
     return;
   }
   rtl.innerHTML = tasks.slice(0,8).map(t=>{
-    const user = getUserById(t.assignee);
     const done = t.status === 'done';
+    const overdue = t.due && new Date(t.due) < new Date() && t.status !== 'done';
     return `<div class="task-row" onclick="openTaskDetail('${t.id}')">
       <div class="task-check ${done?'is-done':''}" onclick="quickComplete('${t.id}',event)" title="${done?'Reabrir':'Marcar como completada'}">${done?'✓':''}</div>
       <span class="task-row-title ${done?'is-done':''}">${escHtml(t.title)}</span>
       <div class="task-row-meta">
         <span class="prio-badge ${prioClass(t.priority)}">${prioLabel(t.priority)}</span>
-        ${user ? `<div class="mini-avatar" title="${escHtml(user.name)}">${user.initials}</div>` : ''}
+        ${overdue ? `<span style="font-size:.65rem;color:var(--blocked)">⚠ ${fmt(t.due)}</span>` : ''}
+        ${renderAvatarStack(t.assignees)}
       </div>
     </div>`;
   }).join('');
@@ -1428,7 +1496,6 @@ function renderBoard(){
 }
 
 function renderTaskCard(t){
-  const user = getUserById(t.assignee);
   const overdue = t.due && new Date(t.due) < new Date() && t.status!=='done';
   const done = t.status === 'done';
   return `<div class="task-card" draggable="true" data-id="${t.id}"
@@ -1439,12 +1506,13 @@ function renderTaskCard(t){
       <div class="tc-title" style="${done?'text-decoration:line-through;color:var(--muted)':''}">${escHtml(t.title)}</div>
       <div class="card-check ${done?'is-done':''}" onclick="quickComplete('${t.id}',event)" title="${done?'Reabrir':'Completar'}">${done?'✓':''}</div>
     </div>
+    ${t.description ? `<div style="font-size:.76rem;color:var(--muted);line-height:1.45;margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(t.description)}</div>` : ''}
     ${t.tags?.length ? `<div class="tc-tags">${t.tags.map(tag=>`<span class="tag">${escHtml(tag)}</span>`).join('')}</div>` : ''}
     <div class="tc-footer">
       <span class="prio-badge ${prioClass(t.priority)}">${prioLabel(t.priority)}</span>
       <div style="display:flex;align-items:center;gap:6px">
         ${t.due ? `<span class="tc-date" style="${overdue&&!done?'color:var(--blocked)':''}">${fmt(t.due)}</span>` : ''}
-        ${user ? `<div class="mini-avatar" title="${escHtml(user.name)}">${user.initials}</div>` : ''}
+        ${renderAvatarStack(t.assignees, 2)}
       </div>
     </div>
   </div>`;
@@ -1461,8 +1529,8 @@ function renderTeam(){
     return;
   }
   grid.innerHTML = db.users.map(u=>{
-    const taskCount = db.tasks.filter(t=>t.assignee===u.id).length;
-    const activeTasks = db.tasks.filter(t=>t.assignee===u.id && t.status==='in-progress').length;
+    const taskCount = db.tasks.filter(t=>(t.assignees||[]).includes(u.id)).length;
+    const activeTasks = db.tasks.filter(t=>(t.assignees||[]).includes(u.id) && t.status==='in-progress').length;
     return `<div class="member-card">
       <div class="member-avatar">${u.initials}</div>
       <div class="member-name">${escHtml(u.name)}</div>
@@ -1620,6 +1688,17 @@ document.addEventListener('click', e => {
 ═══════════════════════════════════════ */
 renderAll();
 syncSettingsUI();
+
+/* ═══════════════════════════════════════
+   KEYBOARD SHORTCUTS
+═══════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  // Skip if typing in an input/textarea
+  if(e.target.matches('input,textarea,select')) return;
+  // Skip if a modal is open
+  if(document.querySelector('.modal-overlay.open')) return;
+  if(e.key === 'n' || e.key === 'N') { e.preventDefault(); openNewTask(); }
+});
 </script>
 </body>
 </html>
