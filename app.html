@@ -121,10 +121,12 @@
     #view-container {
       flex:1; overflow-y:auto; padding:28px 28px;
     }
+    #view-container.chat-mode { padding:0; overflow:hidden; display:flex; flex-direction:column }
 
     /* ── VIEWS ── */
     .view { display:none }
     .view.active { display:block }
+    .view.active.view-fill { display:flex; flex-direction:column; flex:1; min-height:0 }
     .page-header {
       display:flex; align-items:flex-start; justify-content:space-between;
       margin-bottom:24px; flex-wrap:wrap; gap:12px;
@@ -554,6 +556,96 @@
     @media(max-width:680px){ .plans-grid { grid-template-columns:1fr } .plans-fullscreen { padding:28px 20px } }
 
     /* ── MOBILE ── */
+    /* ── ASSISTANT CHAT ── */
+    #view-assistant { display:none; height:100% }
+    #view-assistant.active { display:flex; flex-direction:column; height:100% }
+    .chat-setup {
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      flex:1; padding:40px 24px;
+    }
+    .chat-setup-card {
+      background:var(--surface); border:1px solid var(--border-md);
+      border-radius:var(--radius-xl); padding:32px; width:100%; max-width:440px;
+      box-shadow:var(--shadow-lg);
+    }
+    .chat-setup-title { font-size:1.1rem; font-weight:700; margin-bottom:8px }
+    .chat-setup-desc { font-size:.82rem; color:var(--muted); margin-bottom:24px; line-height:1.6 }
+    .chat-key-input {
+      width:100%; background:var(--surface2); border:1px solid var(--border-md);
+      border-radius:10px; padding:12px 14px; color:var(--text);
+      font-family:'Inter',monospace; font-size:.84rem; outline:none;
+      margin-bottom:14px; transition:border-color .15s;
+    }
+    .chat-key-input:focus { border-color:rgba(255,255,255,.25) }
+    .chat-key-input::placeholder { color:var(--muted) }
+    .chat-container { display:flex; flex-direction:column; flex:1; min-height:0 }
+    .chat-messages {
+      flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:16px;
+    }
+    .chat-msg { display:flex; gap:10px; max-width:85%; }
+    .chat-msg.user { align-self:flex-end; flex-direction:row-reverse }
+    .chat-msg.assistant { align-self:flex-start }
+    .chat-msg-avatar {
+      width:28px; height:28px; border-radius:8px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-size:.6rem; font-weight:700; letter-spacing:.04em;
+    }
+    .chat-msg.user .chat-msg-avatar { background:var(--surface3); color:var(--muted) }
+    .chat-msg.assistant .chat-msg-avatar { background:var(--surface2); color:var(--text); border:1px solid var(--border-md) }
+    .chat-msg-bubble {
+      padding:12px 16px; border-radius:14px; font-size:.86rem; line-height:1.6;
+    }
+    .chat-msg.user .chat-msg-bubble {
+      background:var(--surface3); color:var(--text);
+      border-radius:14px 4px 14px 14px;
+    }
+    .chat-msg.assistant .chat-msg-bubble {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:4px 14px 14px 14px; color:var(--text);
+    }
+    .chat-msg-bubble p { margin-bottom:8px }
+    .chat-msg-bubble p:last-child { margin-bottom:0 }
+    .chat-msg-bubble strong { color:var(--text); font-weight:600 }
+    .chat-msg-bubble ul, .chat-msg-bubble ol { padding-left:18px; margin:4px 0 8px }
+    .chat-msg-bubble li { margin-bottom:4px }
+    .chat-thinking { display:flex; gap:4px; align-items:center; padding:14px 16px }
+    .chat-thinking span {
+      width:6px; height:6px; border-radius:50%; background:var(--muted);
+      animation:thinking .9s ease-in-out infinite;
+    }
+    .chat-thinking span:nth-child(2) { animation-delay:.15s }
+    .chat-thinking span:nth-child(3) { animation-delay:.3s }
+    @keyframes thinking { 0%,80%,100%{opacity:.25;transform:scale(.8)} 40%{opacity:1;transform:scale(1)} }
+    .chat-input-bar {
+      padding:16px 20px; border-top:1px solid var(--border);
+      display:flex; gap:10px; align-items:flex-end; background:var(--bg);
+    }
+    .chat-textarea {
+      flex:1; background:var(--surface2); border:1px solid var(--border-md);
+      border-radius:12px; padding:11px 14px; color:var(--text);
+      font-family:'Inter',sans-serif; font-size:.88rem; outline:none; resize:none;
+      line-height:1.5; max-height:120px; min-height:44px; overflow-y:auto;
+      transition:border-color .15s;
+    }
+    .chat-textarea:focus { border-color:rgba(255,255,255,.2) }
+    .chat-textarea::placeholder { color:var(--muted) }
+    .chat-send-btn {
+      width:40px; height:40px; border-radius:10px; flex-shrink:0;
+      background:var(--text); color:var(--bg); display:flex;
+      align-items:center; justify-content:center; transition:opacity .15s;
+    }
+    .chat-send-btn:hover { opacity:.8 }
+    .chat-send-btn:disabled { opacity:.35; cursor:default }
+    .chat-suggestions {
+      display:flex; gap:8px; flex-wrap:wrap; padding:0 20px 12px;
+    }
+    .chat-suggestion {
+      padding:6px 14px; border-radius:20px; font-size:.75rem; cursor:pointer;
+      border:1px solid var(--border-md); background:none; color:var(--muted);
+      transition:all .15s; font-family:'Inter',sans-serif; white-space:nowrap;
+    }
+    .chat-suggestion:hover { color:var(--text); border-color:rgba(255,255,255,.2) }
+
     @media(max-width:900px){
       #app-sidebar {
         position:fixed; top:0; left:0; bottom:0;
@@ -630,6 +722,10 @@
     <button class="nav-item" data-view="settings">
       <span class="nav-item-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7.5" cy="4.5" r="2.5"/><path d="M1.5 13.5c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"/></svg></span>
       <span class="nav-item-label">Métricas</span>
+    </button>
+    <button class="nav-item" data-view="assistant">
+      <span class="nav-item-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 8c0 3-2.5 5-5.5 5a6.3 6.3 0 01-3-.7L1 13.5l1.2-3.5A5.3 5.3 0 012 7.5C2 4.5 4.5 2 7.5 2S13 4.5 13 7.5V8z"/><circle cx="5.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="7.5" cy="7.5" r=".6" fill="currentColor"/><circle cx="9.5" cy="7.5" r=".6" fill="currentColor"/></svg></span>
+      <span class="nav-item-label">Asistente IA</span>
     </button>
   </nav>
   <div class="sidebar-footer" id="sidebar-footer" onclick="openPlansModal()">
@@ -911,6 +1007,53 @@
 
     </div>
 
+    <!-- ══ ASISTENTE IA ══ -->
+    <div class="view view-fill" id="view-assistant">
+      <!-- Setup screen (shown when no API key) -->
+      <div class="chat-setup" id="chat-setup">
+        <div class="chat-setup-card">
+          <div class="chat-setup-title">Asistente IA NutrIA</div>
+          <p class="chat-setup-desc">
+            El asistente usa la API de Claude (Anthropic) para generar planes de dieta personalizados, responder preguntas nutricionales y darte consejos basados en tu perfil y la base de datos de alimentos.
+            <br><br>
+            Introduce tu API key de Anthropic para continuar. Se guardará solo en tu navegador.
+          </p>
+          <input type="password" class="chat-key-input" id="chat-api-key-input"
+            placeholder="sk-ant-api03-…"
+            onkeydown="if(event.key==='Enter')saveApiKey()"/>
+          <button class="btn btn-primary" style="width:100%" onclick="saveApiKey()">Guardar y comenzar</button>
+          <p style="font-size:.72rem;color:var(--muted);margin-top:12px;text-align:center;line-height:1.5">
+            Obtén tu API key en <strong style="color:var(--text)">console.anthropic.com</strong>.<br>
+            El coste por conversación es muy bajo (~$0.001).
+          </p>
+        </div>
+      </div>
+      <!-- Chat interface -->
+      <div class="chat-container" id="chat-container" style="display:none">
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-suggestions" id="chat-suggestions">
+          <button class="chat-suggestion" onclick="sendSuggestion(this)">Genera un plan semanal para mi perfil</button>
+          <button class="chat-suggestion" onclick="sendSuggestion(this)">¿Qué alimentos me recomiendas para ganar musculo?</button>
+          <button class="chat-suggestion" onclick="sendSuggestion(this)">Dame ideas de desayunos altos en proteína</button>
+          <button class="chat-suggestion" onclick="sendSuggestion(this)">¿Cómo distribuyo mis macros?</button>
+        </div>
+        <div class="chat-input-bar">
+          <textarea class="chat-textarea" id="chat-input" placeholder="Escribe tu pregunta…" rows="1"
+            onkeydown="chatKeydown(event)" oninput="autoResizeChat(this)"></textarea>
+          <button class="chat-send-btn" id="chat-send" onclick="sendMessage()" title="Enviar">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13.5 2.5l-11 4.5 5 1 1 5z"/>
+            </svg>
+          </button>
+        </div>
+        <div style="text-align:center;padding:6px 0 10px">
+          <button onclick="clearChat()" style="font-size:.7rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Nueva conversación</button>
+          <span style="color:var(--border-md);margin:0 8px">·</span>
+          <button onclick="removeApiKey()" style="font-size:.7rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Cambiar API key</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /view-container -->
 </div><!-- /app-main -->
 
@@ -1188,7 +1331,7 @@ let currentCatFilter = 'all';
 /* ═══════════════════════════════════════
    NAVIGATION
 ═══════════════════════════════════════ */
-const TOPBAR_TITLES = { dashboard:'Inicio', plan:'Mi Plan', foods:'Alimentos', shopping:'Lista de Compra', settings:'Métricas' };
+const TOPBAR_TITLES = { dashboard:'Inicio', plan:'Mi Plan', foods:'Alimentos', shopping:'Lista de Compra', settings:'Métricas', assistant:'Asistente IA' };
 
 function showView(id){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1197,12 +1340,14 @@ function showView(id){
     b.classList.toggle('active', b.dataset.view===id);
   });
   document.getElementById('topbar-title').textContent = TOPBAR_TITLES[id] || '';
+  document.getElementById('view-container').classList.toggle('chat-mode', id==='assistant');
   closeSidebar();
   if(id==='dashboard') renderDashboard();
   if(id==='plan') renderPlanView();
   if(id==='foods') renderFoods();
   if(id==='shopping') renderShopping();
   if(id==='settings') syncSettings();
+  if(id==='assistant') initAssistant();
 }
 
 document.querySelectorAll('.nav-item').forEach(btn=>{
@@ -1992,6 +2137,269 @@ html.setAttribute('data-theme', savedTheme);
 })();
 renderDashboard();
 renderFoods();
+
+/* ═══════════════════════════════════════
+   ASSISTANT IA
+═══════════════════════════════════════ */
+let chatHistory = [];
+let chatBusy = false;
+
+function initAssistant(){
+  const key = localStorage.getItem('fd_api_key');
+  document.getElementById('chat-setup').style.display = key ? 'none' : 'flex';
+  document.getElementById('chat-container').style.display = key ? 'flex' : 'none';
+  document.getElementById('chat-container').style.flexDirection = 'column';
+  if(key && chatHistory.length === 0) addWelcomeMsg();
+}
+
+function saveApiKey(){
+  const val = document.getElementById('chat-api-key-input').value.trim();
+  if(!val.startsWith('sk-ant-')){ showToast('API key inválida'); return; }
+  localStorage.setItem('fd_api_key', val);
+  initAssistant();
+}
+
+function removeApiKey(){
+  localStorage.removeItem('fd_api_key');
+  chatHistory = [];
+  document.getElementById('chat-messages').innerHTML = '';
+  initAssistant();
+}
+
+function clearChat(){
+  chatHistory = [];
+  document.getElementById('chat-messages').innerHTML = '';
+  addWelcomeMsg();
+}
+
+function addWelcomeMsg(){
+  const prof = getProfile();
+  const name = (session.name||'').split(' ')[0] || 'ahí';
+  addChatMsg('assistant',
+    `Hola, ${name}! Soy tu asistente nutricional de NutrIA.\n\n` +
+    `Tengo acceso a tu perfil (${prof.calories} kcal · objetivo: ${prof.goalLabel}) ` +
+    `y a la base de datos de alimentos de supermercados españoles.\n\n` +
+    `Puedo generarte planes de dieta, responder preguntas nutricionales o darte ` +
+    `consejos personalizados. ¿En qué te ayudo?`
+  );
+}
+
+function getProfile(){
+  const calories = parseInt(document.getElementById('s-calories')?.value)||2000;
+  const protein  = parseInt(document.getElementById('s-protein')?.value)||30;
+  const carbs    = parseInt(document.getElementById('s-carbs')?.value)||45;
+  const fat      = parseInt(document.getElementById('s-fat')?.value)||25;
+  const budget   = parseInt(document.getElementById('s-budget')?.value)||7;
+  const supermarket = document.getElementById('s-supermarket')?.value||'any';
+  const weight   = parseInt(document.getElementById('s-weight')?.value)||75;
+  const height   = parseInt(document.getElementById('s-height')?.value)||175;
+  const age      = parseInt(document.getElementById('s-age')?.value)||30;
+  const gender   = document.getElementById('s-gender')?.value||'male';
+  const activity = document.getElementById('s-activity')?.value||'1.55';
+  const allergies= [...document.querySelectorAll('.allergy-chip.active')].map(c=>c.dataset.allergy).join(', ')||'ninguna';
+  const goalMap = { cut_hard:'definición fuerte', cut:'definición', maintain:'mantenimiento', bulk:'volumen', bulk_hard:'superávit fuerte' };
+  const goalEl = document.querySelector('.goal-option.active');
+  const goalLabel = goalEl ? (goalMap[goalEl.dataset.goal]||'mantenimiento') : 'mantenimiento';
+  const mealCount = document.querySelector('.meal-count-btn.active')?.dataset.meals||4;
+  return { calories, protein, carbs, fat, budget, supermarket, weight, height, age, gender, activity, allergies, goalLabel, mealCount };
+}
+
+function buildSystemPrompt(){
+  const p = getProfile();
+  const protG = Math.round(p.calories * p.protein/100 / 4);
+  const carbG = Math.round(p.calories * p.carbs/100 / 4);
+  const fatG  = Math.round(p.calories * p.fat/100 / 9);
+
+  // Compact FOODS_DB summary by category
+  const catNames = { protein:'Proteínas', carbs:'Carbohidratos', fat:'Grasas', vegetable:'Verduras', fruit:'Frutas', dairy:'Lácteos' };
+  const byCategory = {};
+  FOODS_DB.forEach(f => {
+    const c = f.category || 'otros';
+    if(!byCategory[c]) byCategory[c] = [];
+    byCategory[c].push(f);
+  });
+  let foodSummary = '';
+  for(const [cat, foods] of Object.entries(byCategory)){
+    foodSummary += `\n### ${catNames[cat]||cat}\n`;
+    foods.forEach(f => {
+      const superTag = f.supermarket ? ` [${f.supermarket}]` : '';
+      const priceTag = f.price_per_kg ? ` ${f.price_per_kg}€/kg` : '';
+      foodSummary += `- ${f.name}${superTag}${priceTag}: ${f.kcal}kcal/100g, P${f.protein}g C${f.carbs}g G${f.fat}g\n`;
+    });
+  }
+
+  const superLabel = p.supermarket==='any' ? 'cualquier supermercado' : p.supermarket;
+
+  return `Eres NutrIA, un asistente nutricional experto integrado en una app de nutrición española.
+
+## Perfil del usuario
+- Peso: ${p.weight}kg | Altura: ${p.height}cm | Edad: ${p.age} años | Sexo: ${p.gender==='male'?'hombre':'mujer'}
+- Actividad física: ${p.activity}x (factor multiplicador TDEE)
+- Objetivo: ${p.goalLabel}
+- Calorías diarias objetivo: ${p.calories} kcal
+- Macros objetivo: Proteína ${p.protein}% (${protG}g) · Carbos ${p.carbs}% (${carbG}g) · Grasas ${p.fat}% (${fatG}g)
+- Presupuesto diario: ${p.budget}€
+- Supermercado preferido: ${superLabel}
+- Alergias/intolerancias: ${p.allergies}
+- Número de comidas al día: ${p.mealCount}
+
+## Base de datos de alimentos disponibles
+Solo puedes recomendar alimentos de esta lista. Respeta siempre las alergias del usuario.
+${foodSummary}
+
+## Instrucciones
+- Responde siempre en español
+- Sé conciso, práctico y personalizado al perfil
+- Cuando generes planes de dieta, usa SOLO alimentos de la lista anterior
+- Respeta el presupuesto diario y las alergias
+- Indica siempre las cantidades en gramos y las calorías aproximadas
+- Si el usuario pide un plan semanal, genera los 7 días con desayuno, comida${p.mealCount>=4?', merienda':''} y cena
+- Los desayunos deben ser apropiados (lácteos, fruta, avena, huevos, pan...). Nunca pongas arroz, pasta o legumbres de desayuno.
+- Usa formato Markdown para estructurar las respuestas (negritas, listas, etc.)`;
+}
+
+function addChatMsg(role, text){
+  const wrap = document.getElementById('chat-messages');
+  const isUser = role === 'user';
+  const prof = getProfile();
+  const initials = (session.name||'YO').split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase()||'YO';
+
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.innerHTML = `
+    <div class="chat-msg-avatar">${isUser ? initials : 'IA'}</div>
+    <div class="chat-msg-bubble">${mdToHtml(text)}</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+  hideSuggestions();
+  return div;
+}
+
+function addThinkingMsg(){
+  const wrap = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg assistant';
+  div.id = 'chat-thinking';
+  div.innerHTML = `<div class="chat-msg-avatar">IA</div>
+    <div class="chat-msg-bubble chat-thinking"><span></span><span></span><span></span></div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function removeThinking(){
+  document.getElementById('chat-thinking')?.remove();
+}
+
+function hideSuggestions(){
+  document.getElementById('chat-suggestions').style.display = 'none';
+}
+
+function mdToHtml(text){
+  // Escape HTML
+  let s = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Bold **text**
+  s = s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  // Headers → bold paragraph
+  s = s.replace(/^#{1,3} (.+)$/gm,'<strong>$1</strong>');
+  // Split into lines and process
+  const lines = s.split('\n');
+  const out = [];
+  let inList = false;
+  for(let i=0; i<lines.length; i++){
+    const ln = lines[i];
+    if(/^[\*\-] /.test(ln)){
+      if(!inList){ out.push('<ul>'); inList=true; }
+      out.push('<li>'+ln.replace(/^[\*\-] /,'')+'</li>');
+    } else {
+      if(inList){ out.push('</ul>'); inList=false; }
+      if(ln.trim()==='') out.push('<br>');
+      else out.push('<p>'+ln+'</p>');
+    }
+  }
+  if(inList) out.push('</ul>');
+  return out.join('');
+}
+
+async function sendMessage(){
+  if(chatBusy) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  await doSend(text);
+}
+
+async function sendSuggestion(btn){
+  const text = btn.textContent;
+  await doSend(text);
+}
+
+async function doSend(text){
+  if(chatBusy) return;
+  const key = localStorage.getItem('fd_api_key');
+  if(!key){ showToast('Configura tu API key primero'); return; }
+
+  chatBusy = true;
+  document.getElementById('chat-send').disabled = true;
+
+  addChatMsg('user', text);
+  chatHistory.push({ role:'user', content: text });
+  addThinkingMsg();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        system: buildSystemPrompt(),
+        messages: chatHistory
+      })
+    });
+
+    const data = await res.json();
+    removeThinking();
+
+    if(!res.ok){
+      const errMsg = data?.error?.message || `Error ${res.status}`;
+      if(res.status === 401) {
+        showToast('API key inválida');
+        removeApiKey();
+      } else {
+        addChatMsg('assistant', `Lo siento, ha ocurrido un error: ${errMsg}`);
+      }
+      chatHistory.pop();
+    } else {
+      const reply = data.content?.[0]?.text || '';
+      chatHistory.push({ role:'assistant', content: reply });
+      addChatMsg('assistant', reply);
+    }
+  } catch(e) {
+    removeThinking();
+    addChatMsg('assistant', 'Error de conexión. Comprueba tu conexión a internet e inténtalo de nuevo.');
+    chatHistory.pop();
+  }
+
+  chatBusy = false;
+  document.getElementById('chat-send').disabled = false;
+  document.getElementById('chat-input').focus();
+}
+
+function chatKeydown(e){
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+}
+
+function autoResizeChat(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
 </script>
 </body>
 </html>
