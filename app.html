@@ -928,7 +928,7 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Alimentos</h1>
-          <p class="page-sub">Base de datos de productos de supermercados españoles</p>
+          <p class="page-sub">Base de datos colaborativa · <span id="foods-count-label" style="color:var(--accent)">—</span></p>
         </div>
       </div>
       <div class="foods-filters" id="foods-filters">
@@ -936,11 +936,7 @@
           <span class="search-icon"><svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="5.5" cy="5.5" r="4"/><path d="M9 9l2.5 2.5"/></svg></span>
           <input class="search-input" id="food-search" placeholder="Buscar alimento…" oninput="renderFoods()"/>
         </div>
-        <button class="filter-pill active" data-filter-super="all" onclick="setSuperFilter(this,'all')">Todos</button>
-        <button class="filter-pill" data-filter-super="mercadona" onclick="setSuperFilter(this,'mercadona')">Mercadona</button>
-        <button class="filter-pill" data-filter-super="lidl" onclick="setSuperFilter(this,'lidl')">Lidl</button>
-        <button class="filter-pill" data-filter-super="carrefour" onclick="setSuperFilter(this,'carrefour')">Carrefour</button>
-        <button class="filter-pill" data-filter-super="alcampo" onclick="setSuperFilter(this,'alcampo')">Alcampo</button>
+        <button class="btn btn-primary btn-sm" onclick="openSubmitFoodModal()" style="margin-left:auto">+ Añadir alimento</button>
       </div>
       <div class="foods-filters" id="foods-cat-filters">
         <button class="filter-pill active" data-filter-cat="all" onclick="setCatFilter(this,'all')">Todas</button>
@@ -1118,30 +1114,6 @@
       </div>
 
       <div class="settings-section">
-        <div class="settings-header">Preferencias de compra</div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">Presupuesto diario</div>
-            <div class="settings-sub" id="s-budget-label">7 €/día</div>
-          </div>
-          <input type="range" class="settings-slider" id="s-budget" min="3" max="20" value="7" oninput="updateBudgetLabel()"/>
-        </div>
-        <div class="settings-row">
-          <div>
-            <div class="settings-label">Supermercado preferido</div>
-            <div class="settings-sub">Filtra los productos de tu tienda habitual</div>
-          </div>
-          <select class="settings-select" id="s-supermarket" onchange="saveProfile()">
-            <option value="any">Cualquiera</option>
-            <option value="mercadona">Mercadona</option>
-            <option value="lidl">Lidl</option>
-            <option value="carrefour">Carrefour</option>
-            <option value="alcampo">Alcampo</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="settings-section">
         <div class="settings-header">Alergias e intolerancias</div>
         <div class="allergy-chips" id="allergy-chips">
           <button class="allergy-chip" data-allergy="gluten" onclick="toggleAllergy(this)">Gluten</button>
@@ -1198,25 +1170,9 @@
         La IA generará un plan de 7 días personalizado usando tu configuración actual de Métricas.
         Puedes modificar los parámetros antes de continuar.
       </p>
-      <div class="field-row">
-        <div class="field">
-          <label>Calorías diarias</label>
-          <input type="number" id="gen-calories" placeholder="2000" min="1000" max="5000"/>
-        </div>
-        <div class="field">
-          <label>Presupuesto (€/día)</label>
-          <input type="number" id="gen-budget" placeholder="7" min="2" max="30" step="0.5"/>
-        </div>
-      </div>
       <div class="field">
-        <label>Supermercado</label>
-        <select id="gen-supermarket">
-          <option value="any">Cualquiera</option>
-          <option value="mercadona">Mercadona</option>
-          <option value="lidl">Lidl</option>
-          <option value="carrefour">Carrefour</option>
-          <option value="alcampo">Alcampo</option>
-        </select>
+        <label>Calorías diarias</label>
+        <input type="number" id="gen-calories" placeholder="2000" min="1000" max="5000"/>
       </div>
       <div class="field">
         <label>Distribución de macros</label>
@@ -1287,6 +1243,69 @@
   </div>
 </div>
 
+<!-- MODAL: SUBMIT FOOD -->
+<div class="modal-overlay" id="modal-submit-food">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Añadir alimento a la comunidad</span>
+      <button class="modal-close" onclick="closeModal('modal-submit-food')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:.81rem;color:var(--muted);margin-bottom:18px;line-height:1.6">
+        Los valores son por <strong style="color:var(--text)">100g</strong> del alimento. Serán visibles para todos los usuarios.
+      </p>
+      <div class="field">
+        <label>Nombre del alimento *</label>
+        <input type="text" id="sf-name" placeholder="Ej: Pechuga de pollo a la plancha"/>
+      </div>
+      <div class="field">
+        <label>Marca (opcional)</label>
+        <input type="text" id="sf-brand" placeholder="Ej: Hacendado"/>
+      </div>
+      <div class="field">
+        <label>Categoría *</label>
+        <select id="sf-category">
+          <option value="">Selecciona categoría</option>
+          <option value="protein">Proteína</option>
+          <option value="carbs">Carbohidratos</option>
+          <option value="fat">Grasas</option>
+          <option value="vegetable">Verdura</option>
+          <option value="fruit">Fruta</option>
+          <option value="dairy">Lácteo</option>
+        </select>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Calorías (kcal) *</label>
+          <input type="number" id="sf-cal" placeholder="0" min="0" step="0.1"/>
+        </div>
+        <div class="field">
+          <label>Proteína (g) *</label>
+          <input type="number" id="sf-protein" placeholder="0" min="0" step="0.1"/>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Carbohidratos (g) *</label>
+          <input type="number" id="sf-carbs" placeholder="0" min="0" step="0.1"/>
+        </div>
+        <div class="field">
+          <label>Grasas (g) *</label>
+          <input type="number" id="sf-fat" placeholder="0" min="0" step="0.1"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Fibra (g)</label>
+        <input type="number" id="sf-fiber" placeholder="0" min="0" step="0.1"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-submit-food')">Cancelar</button>
+      <button class="btn btn-primary btn-sm" id="sf-submit-btn" onclick="submitCommunityFood()">Publicar alimento</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -1294,104 +1313,87 @@
    FOOD DATABASE
 ═══════════════════════════════════════ */
 const FOODS_DB = [
-  // MERCADONA — Proteínas
-  {id:'f01',name:'Pechuga de pollo fileteada',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:109,pro:23.1,carb:0,fat:1.2,fiber:0,pricePerKg:8.95,allergens:[]},
-  {id:'f02',name:'Pavo filetes',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:99,pro:21.4,carb:0,fat:1.0,fiber:0,pricePerKg:7.50,allergens:[]},
-  {id:'f03',name:'Salmón fresco',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:208,pro:20.4,carb:0,fat:13.6,fiber:0,pricePerKg:16.90,allergens:['pescado']},
-  {id:'f04',name:'Atún al natural (lata 80g)',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:103,pro:23.5,carb:0,fat:0.5,fiber:0,pricePerKg:13.10,allergens:['pescado']},
-  {id:'f05',name:'Huevos camperos M',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:143,pro:12.6,carb:0.6,fat:9.9,fiber:0,pricePerKg:4.10,allergens:['huevo']},
-  {id:'f06',name:'Merluza filetes',brand:'Hacendado',supermarket:'mercadona',category:'protein',cal:80,pro:18.0,carb:0,fat:0.7,fiber:0,pricePerKg:9.95,allergens:['pescado']},
-  // MERCADONA — Carbohidratos
-  {id:'f07',name:'Arroz redondo',brand:'Hacendado',supermarket:'mercadona',category:'carbs',cal:352,pro:7.0,carb:78.0,fat:0.6,fiber:0.4,pricePerKg:0.65,allergens:[]},
-  {id:'f08',name:'Espaguetis',brand:'Hacendado',supermarket:'mercadona',category:'carbs',cal:350,pro:12.5,carb:70.5,fat:1.5,fiber:2.5,pricePerKg:0.98,allergens:['gluten']},
-  {id:'f09',name:'Avena en copos',brand:'Hacendado',supermarket:'mercadona',category:'carbs',cal:375,pro:12.5,carb:60.5,fat:7.0,fiber:10.0,pricePerKg:2.70,allergens:['gluten']},
-  {id:'f10',name:'Pan integral de molde',brand:'Hacendado',supermarket:'mercadona',category:'carbs',cal:237,pro:8.5,carb:42.5,fat:2.8,fiber:7.0,pricePerKg:3.44,allergens:['gluten']},
-  {id:'f11',name:'Patata',brand:'',supermarket:'mercadona',category:'carbs',cal:77,pro:2.0,carb:17.0,fat:0.1,fiber:2.2,pricePerKg:1.09,allergens:[]},
-  // MERCADONA — Verduras
-  {id:'f12',name:'Brócoli',brand:'',supermarket:'mercadona',category:'vegetable',cal:34,pro:2.8,carb:5.0,fat:0.4,fiber:2.6,pricePerKg:1.69,allergens:[]},
-  {id:'f13',name:'Espinacas baby',brand:'Hacendado',supermarket:'mercadona',category:'vegetable',cal:23,pro:2.9,carb:1.4,fat:0.4,fiber:2.2,pricePerKg:7.45,allergens:[]},
-  {id:'f14',name:'Tomate rama',brand:'',supermarket:'mercadona',category:'vegetable',cal:18,pro:0.9,carb:3.5,fat:0.2,fiber:1.2,pricePerKg:1.79,allergens:[]},
-  {id:'f15',name:'Zanahoria',brand:'',supermarket:'mercadona',category:'vegetable',cal:41,pro:0.9,carb:9.6,fat:0.2,fiber:2.8,pricePerKg:0.89,allergens:[]},
-  // MERCADONA — Grasas
-  {id:'f16',name:'Almendras crudas',brand:'Hacendado',supermarket:'mercadona',category:'fat',cal:576,pro:21.2,carb:4.2,fat:50.5,fiber:12.5,pricePerKg:14.98,allergens:['frutos_secos']},
-  {id:'f17',name:'Aceite de oliva virgen extra',brand:'Hacendado',supermarket:'mercadona',category:'fat',cal:899,pro:0,carb:0,fat:99.9,fiber:0,pricePerKg:5.05,allergens:[]},
-  {id:'f18',name:'Aguacate',brand:'',supermarket:'mercadona',category:'fat',cal:160,pro:2.0,carb:1.8,fat:14.7,fiber:6.7,pricePerKg:3.27,allergens:[]},
-  // MERCADONA — Lácteos
-  {id:'f19',name:'Leche entera',brand:'Hacendado',supermarket:'mercadona',category:'dairy',cal:64,pro:3.2,carb:4.7,fat:3.5,fiber:0,pricePerKg:0.79,allergens:['lactosa']},
-  {id:'f20',name:'Yogur natural (x4)',brand:'Hacendado',supermarket:'mercadona',category:'dairy',cal:56,pro:4.0,carb:5.5,fat:1.8,fiber:0,pricePerKg:1.70,allergens:['lactosa']},
-  {id:'f21',name:'Queso fresco Burgos',brand:'Hacendado',supermarket:'mercadona',category:'dairy',cal:165,pro:15.0,carb:2.4,fat:10.5,fiber:0,pricePerKg:5.16,allergens:['lactosa']},
-  // MERCADONA — Fruta
-  {id:'f22',name:'Plátano',brand:'',supermarket:'mercadona',category:'fruit',cal:89,pro:1.1,carb:20.0,fat:0.3,fiber:2.6,pricePerKg:1.19,allergens:[]},
-  {id:'f23',name:'Manzana golden',brand:'',supermarket:'mercadona',category:'fruit',cal:52,pro:0.3,carb:13.8,fat:0.2,fiber:2.4,pricePerKg:1.49,allergens:[]},
-  // LIDL — Proteínas
-  {id:'f24',name:'Bacalao desalado',brand:'Combino',supermarket:'lidl',category:'protein',cal:92,pro:21.3,carb:0,fat:0.5,fiber:0,pricePerKg:14.98,allergens:['pescado']},
-  {id:'f25',name:'Pechuga pavo lonchas',brand:'Milbona',supermarket:'lidl',category:'protein',cal:105,pro:21.5,carb:0.8,fat:1.5,fiber:0,pricePerKg:9.95,allergens:[]},
-  {id:'f26',name:'Sardinas en aceite',brand:'Nixe',supermarket:'lidl',category:'protein',cal:208,pro:18.0,carb:0,fat:15.0,fiber:0,pricePerKg:7.12,allergens:['pescado']},
-  {id:'f27',name:'Tofu natural',brand:'Vemondo',supermarket:'lidl',category:'protein',cal:80,pro:8.0,carb:0.5,fat:4.5,fiber:0.3,pricePerKg:4.23,allergens:['soja']},
-  // LIDL — Carbohidratos
-  {id:'f28',name:'Quinoa',brand:'Combino',supermarket:'lidl',category:'carbs',cal:368,pro:14.1,carb:57.2,fat:6.1,fiber:7.0,pricePerKg:4.98,allergens:[]},
-  {id:'f29',name:'Arroz integral',brand:'Combino',supermarket:'lidl',category:'carbs',cal:340,pro:7.5,carb:69.0,fat:2.2,fiber:3.5,pricePerKg:0.99,allergens:[]},
-  {id:'f30',name:'Pan multicereal',brand:'Kamps',supermarket:'lidl',category:'carbs',cal:253,pro:9.2,carb:43.5,fat:4.5,fiber:8.0,pricePerKg:2.78,allergens:['gluten']},
-  {id:'f31',name:'Boniato',brand:'',supermarket:'lidl',category:'carbs',cal:86,pro:1.6,carb:20.1,fat:0.1,fiber:3.0,pricePerKg:1.99,allergens:[]},
-  // LIDL — Verduras
-  {id:'f32',name:'Pimiento rojo',brand:'',supermarket:'lidl',category:'vegetable',cal:31,pro:1.0,carb:6.0,fat:0.3,fiber:2.1,pricePerKg:1.49,allergens:[]},
-  {id:'f33',name:'Calabacín',brand:'',supermarket:'lidl',category:'vegetable',cal:17,pro:1.2,carb:2.5,fat:0.3,fiber:1.1,pricePerKg:1.29,allergens:[]},
-  {id:'f34',name:'Pepino',brand:'',supermarket:'lidl',category:'vegetable',cal:15,pro:0.7,carb:2.2,fat:0.1,fiber:0.7,pricePerKg:1.38,allergens:[]},
-  // LIDL — Grasas
-  {id:'f35',name:'Nueces',brand:'Favorina',supermarket:'lidl',category:'fat',cal:654,pro:15.2,carb:6.7,fat:65.2,fiber:6.7,pricePerKg:13.95,allergens:['frutos_secos']},
-  {id:'f36',name:'Mantequilla de cacahuete',brand:'Lidl',supermarket:'lidl',category:'fat',cal:596,pro:25.4,carb:16.4,fat:49.9,fiber:5.7,pricePerKg:6.26,allergens:['frutos_secos']},
-  // LIDL — Lácteos
-  {id:'f37',name:'Queso cottage',brand:'Milbona',supermarket:'lidl',category:'dairy',cal:98,pro:11.5,carb:3.0,fat:4.5,fiber:0,pricePerKg:5.16,allergens:['lactosa']},
-  {id:'f38',name:'Leche desnatada',brand:'Milbona',supermarket:'lidl',category:'dairy',cal:34,pro:3.4,carb:4.9,fat:0.1,fiber:0,pricePerKg:0.69,allergens:['lactosa']},
-  // LIDL — Fruta
-  {id:'f39',name:'Naranja',brand:'',supermarket:'lidl',category:'fruit',cal:47,pro:0.9,carb:10.6,fat:0.1,fiber:2.4,pricePerKg:1.29,allergens:[]},
-  {id:'f40',name:'Arándanos',brand:'',supermarket:'lidl',category:'fruit',cal:57,pro:0.7,carb:14.5,fat:0.3,fiber:2.4,pricePerKg:19.92,allergens:[]},
-  // CARREFOUR — Proteínas
-  {id:'f41',name:'Ternera picada',brand:'Carrefour',supermarket:'carrefour',category:'protein',cal:163,pro:21.0,carb:0,fat:9.0,fiber:0,pricePerKg:8.50,allergens:[]},
-  {id:'f42',name:'Gambas cocidas peladas',brand:'Carrefour',supermarket:'carrefour',category:'protein',cal:85,pro:18.0,carb:0,fat:1.5,fiber:0,pricePerKg:9.95,allergens:['mariscos']},
-  {id:'f43',name:'Jamón cocido lonchas',brand:'Carrefour',supermarket:'carrefour',category:'protein',cal:116,pro:18.0,carb:1.5,fat:4.0,fiber:0,pricePerKg:12.45,allergens:[]},
-  {id:'f44',name:'Lentejas cocidas (bote)',brand:'Carrefour',supermarket:'carrefour',category:'protein',cal:116,pro:9.0,carb:16.5,fat:0.4,fiber:7.9,pricePerKg:2.13,allergens:[]},
-  // CARREFOUR — Carbohidratos
-  {id:'f45',name:'Pasta penne integral',brand:'Carrefour',supermarket:'carrefour',category:'carbs',cal:340,pro:14.0,carb:60.5,fat:2.8,fiber:8.0,pricePerKg:1.98,allergens:['gluten']},
-  {id:'f46',name:'Cuscús',brand:'Carrefour',supermarket:'carrefour',category:'carbs',cal:376,pro:12.8,carb:71.5,fat:1.1,fiber:5.0,pricePerKg:2.58,allergens:['gluten']},
-  {id:'f47',name:'Pan de centeno',brand:'Carrefour',supermarket:'carrefour',category:'carbs',cal:259,pro:8.5,carb:47.5,fat:3.5,fiber:6.5,pricePerKg:3.98,allergens:['gluten']},
-  // CARREFOUR — Verduras
-  {id:'f48',name:'Lechuga iceberg',brand:'',supermarket:'carrefour',category:'vegetable',cal:13,pro:0.9,carb:2.0,fat:0.1,fiber:1.2,pricePerKg:0.99,allergens:[]},
-  {id:'f49',name:'Tomate cherry',brand:'',supermarket:'carrefour',category:'vegetable',cal:18,pro:0.9,carb:3.9,fat:0.2,fiber:1.2,pricePerKg:7.56,allergens:[]},
-  {id:'f50',name:'Champiñones',brand:'',supermarket:'carrefour',category:'vegetable',cal:22,pro:3.1,carb:3.3,fat:0.3,fiber:1.0,pricePerKg:3.98,allergens:[]},
-  // CARREFOUR — Grasas
-  {id:'f51',name:'Semillas de chía',brand:'Carrefour',supermarket:'carrefour',category:'fat',cal:486,pro:16.5,carb:7.7,fat:30.7,fiber:34.4,pricePerKg:13.95,allergens:[]},
-  {id:'f52',name:'Aceite de girasol',brand:'Carrefour',supermarket:'carrefour',category:'fat',cal:899,pro:0,carb:0,fat:99.9,fiber:0,pricePerKg:1.79,allergens:[]},
-  // CARREFOUR — Lácteos
-  {id:'f53',name:'Queso mozzarella',brand:'Carrefour',supermarket:'carrefour',category:'dairy',cal:280,pro:17.5,carb:2.5,fat:22.5,fiber:0,pricePerKg:11.92,allergens:['lactosa']},
-  {id:'f54',name:'Kéfir natural',brand:'Carrefour',supermarket:'carrefour',category:'dairy',cal:66,pro:3.8,carb:5.0,fat:3.5,fiber:0,pricePerKg:3.78,allergens:['lactosa']},
-  // CARREFOUR — Fruta
-  {id:'f55',name:'Fresas',brand:'',supermarket:'carrefour',category:'fruit',cal:32,pro:0.7,carb:7.7,fat:0.3,fiber:2.0,pricePerKg:5.98,allergens:[]},
-  {id:'f56',name:'Pera conferencia',brand:'',supermarket:'carrefour',category:'fruit',cal:57,pro:0.4,carb:14.3,fat:0.1,fiber:3.1,pricePerKg:1.79,allergens:[]},
-  // ALCAMPO — Proteínas
-  {id:'f57',name:'Muslos de pollo',brand:'Auchan',supermarket:'alcampo',category:'protein',cal:177,pro:19.0,carb:0,fat:11.5,fiber:0,pricePerKg:4.99,allergens:[]},
-  {id:'f58',name:'Garbanzos cocidos (bote)',brand:'Auchan',supermarket:'alcampo',category:'protein',cal:164,pro:8.9,carb:22.5,fat:2.6,fiber:6.0,pricePerKg:2.23,allergens:[]},
-  {id:'f59',name:'Sepia limpia',brand:'Auchan',supermarket:'alcampo',category:'protein',cal:79,pro:16.1,carb:0.4,fat:1.0,fiber:0,pricePerKg:7.50,allergens:['mariscos']},
-  {id:'f60',name:'Lomo de cerdo',brand:'Auchan',supermarket:'alcampo',category:'protein',cal:143,pro:22.0,carb:0,fat:6.0,fiber:0,pricePerKg:6.99,allergens:['cerdo']},
-  // ALCAMPO — Carbohidratos
-  {id:'f61',name:'Arroz basmati',brand:'Auchan',supermarket:'alcampo',category:'carbs',cal:348,pro:8.0,carb:76.5,fat:0.5,fiber:1.0,pricePerKg:1.39,allergens:[]},
-  {id:'f62',name:'Copos de avena integrales',brand:'Auchan',supermarket:'alcampo',category:'carbs',cal:371,pro:13.5,carb:57.6,fat:7.8,fiber:9.7,pricePerKg:2.38,allergens:['gluten']},
-  {id:'f63',name:'Macarrones',brand:'Auchan',supermarket:'alcampo',category:'carbs',cal:350,pro:12.0,carb:70.5,fat:1.5,fiber:2.5,pricePerKg:1.30,allergens:['gluten']},
-  // ALCAMPO — Verduras
-  {id:'f64',name:'Judías verdes',brand:'',supermarket:'alcampo',category:'vegetable',cal:31,pro:2.0,carb:5.0,fat:0.2,fiber:3.4,pricePerKg:2.49,allergens:[]},
-  {id:'f65',name:'Col lombarda',brand:'',supermarket:'alcampo',category:'vegetable',cal:31,pro:1.4,carb:7.4,fat:0.2,fiber:2.1,pricePerKg:0.99,allergens:[]},
-  {id:'f66',name:'Cebolla',brand:'',supermarket:'alcampo',category:'vegetable',cal:40,pro:1.1,carb:9.3,fat:0.1,fiber:1.7,pricePerKg:0.79,allergens:[]},
-  // ALCAMPO — Grasas
-  {id:'f67',name:'Anacardos tostados',brand:'Auchan',supermarket:'alcampo',category:'fat',cal:567,pro:15.3,carb:26.7,fat:45.4,fiber:3.3,pricePerKg:17.45,allergens:['frutos_secos']},
-  {id:'f68',name:'Aceitunas verdes',brand:'Auchan',supermarket:'alcampo',category:'fat',cal:145,pro:1.0,carb:3.8,fat:15.0,fiber:3.5,pricePerKg:4.26,allergens:[]},
-  {id:'f69',name:'Semillas de lino',brand:'Auchan',supermarket:'alcampo',category:'fat',cal:534,pro:18.3,carb:28.9,fat:42.2,fiber:27.3,price:7.96,pricePerKg:7.96,allergens:[]},
-  // ALCAMPO — Lácteos
-  {id:'f70',name:'Requesón',brand:'Auchan',supermarket:'alcampo',category:'dairy',cal:96,pro:8.5,carb:4.2,fat:4.8,fiber:0,pricePerKg:5.16,allergens:['lactosa']},
-  {id:'f71',name:'Queso en lonchas light',brand:'Auchan',supermarket:'alcampo',category:'dairy',cal:240,pro:24.0,carb:2.5,fat:15.0,fiber:0,pricePerKg:12.45,allergens:['lactosa']},
-  // ALCAMPO — Fruta
-  {id:'f72',name:'Plátano de Canarias',brand:'',supermarket:'alcampo',category:'fruit',cal:92,pro:1.2,carb:21.5,fat:0.3,fiber:2.6,pricePerKg:1.99,allergens:[]},
-  {id:'f73',name:'Mango',brand:'',supermarket:'alcampo',category:'fruit',cal:65,pro:0.5,carb:17.0,fat:0.3,fiber:1.8,pricePerKg:4.16,allergens:[]},
-  {id:'f74',name:'Kiwi',brand:'',supermarket:'alcampo',category:'fruit',cal:61,pro:1.1,carb:14.7,fat:0.5,fiber:3.0,pricePerKg:2.29,allergens:[]},
+  // PROTEÍNAS ANIMALES
+  {id:'p01',name:'Pechuga de pollo',category:'protein',cal:165,pro:31,carb:0,fat:3.6,fiber:0,allergens:[]},
+  {id:'p02',name:'Muslos de pollo',category:'protein',cal:215,pro:26,carb:0,fat:12,fiber:0,allergens:[]},
+  {id:'p03',name:'Pechuga de pavo',category:'protein',cal:135,pro:29,carb:0,fat:1.0,fiber:0,allergens:[]},
+  {id:'p04',name:'Salmón',category:'protein',cal:208,pro:20,carb:0,fat:13,fiber:0,allergens:['pescado']},
+  {id:'p05',name:'Atún al natural (lata)',category:'protein',cal:116,pro:25,carb:0,fat:1.0,fiber:0,allergens:['pescado']},
+  {id:'p06',name:'Merluza',category:'protein',cal:82,pro:18,carb:0,fat:0.8,fiber:0,allergens:['pescado']},
+  {id:'p07',name:'Sardinas en aceite',category:'protein',cal:208,pro:25,carb:0,fat:11,fiber:0,allergens:['pescado']},
+  {id:'p08',name:'Bacalao',category:'protein',cal:82,pro:18,carb:0,fat:0.7,fiber:0,allergens:['pescado']},
+  {id:'p09',name:'Huevos',category:'protein',cal:155,pro:13,carb:1.1,fat:11,fiber:0,allergens:['huevo']},
+  {id:'p10',name:'Carne picada (5% grasa)',category:'protein',cal:137,pro:21,carb:0,fat:5.5,fiber:0,allergens:[]},
+  {id:'p11',name:'Ternera (filete)',category:'protein',cal:158,pro:26,carb:0,fat:5.8,fiber:0,allergens:[]},
+  {id:'p12',name:'Lomo de cerdo',category:'protein',cal:143,pro:22,carb:0,fat:6,fiber:0,allergens:['cerdo']},
+  {id:'p13',name:'Gambas',category:'protein',cal:85,pro:18,carb:0.9,fat:0.9,fiber:0,allergens:['mariscos']},
+  {id:'p14',name:'Tofu firme',category:'protein',cal:76,pro:8,carb:1.9,fat:4.8,fiber:0.3,allergens:['soja']},
+  {id:'p15',name:'Jamón cocido',category:'protein',cal:116,pro:18,carb:1.5,fat:4,fiber:0,allergens:[]},
+  {id:'p16',name:'Pavo fiambre',category:'protein',cal:105,pro:21,carb:1,fat:1.5,fiber:0,allergens:[]},
+  {id:'p17',name:'Garbanzos cocidos',category:'protein',cal:164,pro:9,carb:27,fat:2.6,fiber:8,allergens:[]},
+  {id:'p18',name:'Lentejas cocidas',category:'protein',cal:116,pro:9,carb:20,fat:0.4,fiber:8,allergens:[]},
+  // LÁCTEOS
+  {id:'d01',name:'Yogur griego natural',category:'dairy',cal:97,pro:9,carb:3.6,fat:5,fiber:0,allergens:['lactosa']},
+  {id:'d02',name:'Yogur natural desnatado',category:'dairy',cal:56,pro:5.7,carb:7.3,fat:0.1,fiber:0,allergens:['lactosa']},
+  {id:'d03',name:'Queso cottage',category:'dairy',cal:98,pro:11,carb:3.4,fat:4.3,fiber:0,allergens:['lactosa']},
+  {id:'d04',name:'Leche entera',category:'dairy',cal:61,pro:3.2,carb:4.7,fat:3.3,fiber:0,allergens:['lactosa']},
+  {id:'d05',name:'Leche semidesnatada',category:'dairy',cal:46,pro:3.5,carb:5,fat:1.5,fiber:0,allergens:['lactosa']},
+  {id:'d06',name:'Queso fresco (0% MG)',category:'dairy',cal:61,pro:12,carb:3.6,fat:0.2,fiber:0,allergens:['lactosa']},
+  {id:'d07',name:'Requesón',category:'dairy',cal:84,pro:11,carb:4,fat:2,fiber:0,allergens:['lactosa']},
+  {id:'d08',name:'Mozzarella fresca',category:'dairy',cal:280,pro:18,carb:2.2,fat:22,fiber:0,allergens:['lactosa']},
+  {id:'d09',name:'Kéfir natural',category:'dairy',cal:66,pro:3.8,carb:5,fat:3.5,fiber:0,allergens:['lactosa']},
+  // CARBOHIDRATOS
+  {id:'c01',name:'Arroz blanco (cocido)',category:'carbs',cal:130,pro:2.7,carb:28,fat:0.3,fiber:0.4,allergens:[]},
+  {id:'c02',name:'Arroz integral (cocido)',category:'carbs',cal:111,pro:2.6,carb:23,fat:0.9,fiber:1.8,allergens:[]},
+  {id:'c03',name:'Arroz basmati (cocido)',category:'carbs',cal:121,pro:2.7,carb:26,fat:0.3,fiber:0.5,allergens:[]},
+  {id:'c04',name:'Pasta (cocida)',category:'carbs',cal:131,pro:5,carb:25,fat:1.1,fiber:1.8,allergens:['gluten']},
+  {id:'c05',name:'Pasta integral (cocida)',category:'carbs',cal:124,pro:5.3,carb:24,fat:0.9,fiber:3.4,allergens:['gluten']},
+  {id:'c06',name:'Avena en copos',category:'carbs',cal:389,pro:17,carb:66,fat:7,fiber:11,allergens:['gluten']},
+  {id:'c07',name:'Pan integral',category:'carbs',cal:247,pro:9,carb:44,fat:4,fiber:7,allergens:['gluten']},
+  {id:'c08',name:'Pan de centeno',category:'carbs',cal:259,pro:8.5,carb:48,fat:3.3,fiber:6.2,allergens:['gluten']},
+  {id:'c09',name:'Patata (cocida)',category:'carbs',cal:77,pro:2,carb:17,fat:0.1,fiber:1.8,allergens:[]},
+  {id:'c10',name:'Boniato (cocido)',category:'carbs',cal:90,pro:2,carb:21,fat:0.1,fiber:3.3,allergens:[]},
+  {id:'c11',name:'Quinoa (cocida)',category:'carbs',cal:120,pro:4.4,carb:21,fat:1.9,fiber:2.8,allergens:[]},
+  {id:'c12',name:'Cuscús (cocido)',category:'carbs',cal:112,pro:3.8,carb:23,fat:0.2,fiber:1.4,allergens:['gluten']},
+  {id:'c13',name:'Maíz dulce (cocido)',category:'carbs',cal:86,pro:3.2,carb:19,fat:1.2,fiber:2,allergens:[]},
+  // GRASAS / FRUTOS SECOS
+  {id:'g01',name:'Aceite de oliva virgen extra',category:'fat',cal:884,pro:0,carb:0,fat:100,fiber:0,allergens:[]},
+  {id:'g02',name:'Aceite de girasol',category:'fat',cal:884,pro:0,carb:0,fat:100,fiber:0,allergens:[]},
+  {id:'g03',name:'Almendras',category:'fat',cal:579,pro:21,carb:22,fat:50,fiber:13,allergens:['frutos_secos']},
+  {id:'g04',name:'Nueces',category:'fat',cal:654,pro:15,carb:14,fat:65,fiber:7,allergens:['frutos_secos']},
+  {id:'g05',name:'Anacardos',category:'fat',cal:553,pro:18,carb:30,fat:44,fiber:3.3,allergens:['frutos_secos']},
+  {id:'g06',name:'Aguacate',category:'fat',cal:160,pro:2,carb:9,fat:15,fiber:7,allergens:[]},
+  {id:'g07',name:'Mantequilla de cacahuete',category:'fat',cal:588,pro:25,carb:20,fat:50,fiber:6,allergens:['frutos_secos']},
+  {id:'g08',name:'Semillas de chía',category:'fat',cal:486,pro:17,carb:42,fat:31,fiber:34,allergens:[]},
+  {id:'g09',name:'Semillas de lino',category:'fat',cal:534,pro:18,carb:29,fat:42,fiber:27,allergens:[]},
+  {id:'g10',name:'Aceitunas',category:'fat',cal:145,pro:1,carb:3.8,fat:15,fiber:3.5,allergens:[]},
+  // VERDURAS
+  {id:'v01',name:'Brócoli',category:'vegetable',cal:34,pro:2.8,carb:7,fat:0.4,fiber:2.6,allergens:[]},
+  {id:'v02',name:'Espinacas',category:'vegetable',cal:23,pro:2.9,carb:3.6,fat:0.4,fiber:2.2,allergens:[]},
+  {id:'v03',name:'Lechuga',category:'vegetable',cal:15,pro:1.4,carb:2.9,fat:0.2,fiber:1.3,allergens:[]},
+  {id:'v04',name:'Tomate',category:'vegetable',cal:18,pro:0.9,carb:3.9,fat:0.2,fiber:1.2,allergens:[]},
+  {id:'v05',name:'Pepino',category:'vegetable',cal:16,pro:0.7,carb:3.6,fat:0.1,fiber:0.5,allergens:[]},
+  {id:'v06',name:'Pimiento rojo',category:'vegetable',cal:31,pro:1,carb:6,fat:0.3,fiber:2.1,allergens:[]},
+  {id:'v07',name:'Calabacín',category:'vegetable',cal:17,pro:1.2,carb:3.1,fat:0.3,fiber:1,allergens:[]},
+  {id:'v08',name:'Berenjena',category:'vegetable',cal:25,pro:1,carb:5.9,fat:0.2,fiber:3,allergens:[]},
+  {id:'v09',name:'Coliflor',category:'vegetable',cal:25,pro:1.9,carb:5,fat:0.3,fiber:2,allergens:[]},
+  {id:'v10',name:'Champiñones',category:'vegetable',cal:22,pro:3.1,carb:3.3,fat:0.3,fiber:1,allergens:[]},
+  {id:'v11',name:'Zanahoria',category:'vegetable',cal:41,pro:0.9,carb:10,fat:0.2,fiber:2.8,allergens:[]},
+  {id:'v12',name:'Cebolla',category:'vegetable',cal:40,pro:1.1,carb:9.3,fat:0.1,fiber:1.7,allergens:[]},
+  {id:'v13',name:'Judías verdes',category:'vegetable',cal:31,pro:2,carb:5,fat:0.2,fiber:3.4,allergens:[]},
+  {id:'v14',name:'Col lombarda',category:'vegetable',cal:31,pro:1.4,carb:7.4,fat:0.2,fiber:2.1,allergens:[]},
+  {id:'v15',name:'Tomate cherry',category:'vegetable',cal:18,pro:0.9,carb:3.9,fat:0.2,fiber:1.2,allergens:[]},
+  // FRUTAS
+  {id:'fr01',name:'Plátano',category:'fruit',cal:89,pro:1.1,carb:23,fat:0.3,fiber:2.6,allergens:[]},
+  {id:'fr02',name:'Manzana',category:'fruit',cal:52,pro:0.3,carb:14,fat:0.2,fiber:2.4,allergens:[]},
+  {id:'fr03',name:'Naranja',category:'fruit',cal:47,pro:0.9,carb:12,fat:0.1,fiber:2.4,allergens:[]},
+  {id:'fr04',name:'Fresas',category:'fruit',cal:32,pro:0.7,carb:7.7,fat:0.3,fiber:2,allergens:[]},
+  {id:'fr05',name:'Arándanos',category:'fruit',cal:57,pro:0.7,carb:14,fat:0.3,fiber:2.4,allergens:[]},
+  {id:'fr06',name:'Kiwi',category:'fruit',cal:61,pro:1.1,carb:15,fat:0.5,fiber:3,allergens:[]},
+  {id:'fr07',name:'Pera',category:'fruit',cal:57,pro:0.4,carb:15,fat:0.1,fiber:3.1,allergens:[]},
+  {id:'fr08',name:'Mango',category:'fruit',cal:60,pro:0.8,carb:15,fat:0.4,fiber:1.6,allergens:[]},
+  {id:'fr09',name:'Melocotón',category:'fruit',cal:39,pro:0.9,carb:10,fat:0.3,fiber:1.5,allergens:[]},
+  {id:'fr10',name:'Uvas',category:'fruit',cal:69,pro:0.7,carb:18,fat:0.2,fiber:0.9,allergens:[]},
 ];
 
 const FOOD_MAP = {};
@@ -1404,7 +1406,7 @@ const MEAL_PCT = { desayuno:.22, almuerzo:.10, comida:.35, merienda:.10, cena:.2
 const DAYS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 
 // Carbs no aptos para desayuno (arroz, pasta, patata, quinoa, boniato…)
-const NON_BREAKFAST_CARBS = new Set(['f07','f08','f11','f28','f29','f31','f45','f46','f61','f63']);
+const NON_BREAKFAST_CARBS = new Set(['c01','c02','c03','c04','c05','c09','c10','c11','c12','c13']);
 
 // Configuraciones de comidas por número de ingestas
 const MEAL_CONFIGS = {
@@ -1443,7 +1445,7 @@ document.getElementById('current-user-name').textContent = parts[0];
 function getProfile(){
   return session.profile || {
     goal:'maintain', targetCalories:2000, proteinPct:30, carbsPct:45, fatPct:25,
-    dailyBudget:7, preferredSupermarket:'any', allergies:[]
+    allergies:[]
   };
 }
 function saveProfileToSession(p){
@@ -1454,8 +1456,8 @@ function saveProfileToSession(p){
 function loadPlan(){ try{ return JSON.parse(localStorage.getItem('fd_plan'))||null }catch{ return null } }
 function savePlan(p){ localStorage.setItem('fd_plan', JSON.stringify(p)) }
 
-let currentSuperFilter = 'all';
 let currentCatFilter = 'all';
+let communityFoods = [];
 
 /* ═══════════════════════════════════════
    NAVIGATION
@@ -1687,7 +1689,6 @@ function openMealDetail(dayName, mealType){
     ${items.map(item=>{
       const f = FOOD_MAP[item.foodId]; if(!f) return '';
       const mult = item.grams/100;
-      const cost = (f.pricePerKg * item.grams/1000).toFixed(2);
       return `<div style="background:var(--surface2);border-radius:12px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px">
         <div style="flex:1">
           <div style="font-size:.88rem;font-weight:600">${f.name}</div>
@@ -1699,7 +1700,6 @@ function openMealDetail(dayName, mealType){
             <span style="color:var(--fat)">${(f.fat*mult).toFixed(1)}g G</span>
           </div>
         </div>
-        <div style="font-size:.78rem;color:var(--muted)">~${cost} €</div>
       </div>`;
     }).join('')}`;
   document.getElementById('modal-meal').classList.add('open');
@@ -1708,11 +1708,6 @@ function openMealDetail(dayName, mealType){
 /* ═══════════════════════════════════════
    FOODS VIEW
 ═══════════════════════════════════════ */
-function setSuperFilter(btn, val){
-  currentSuperFilter = val;
-  document.querySelectorAll('[data-filter-super]').forEach(b=>b.classList.toggle('active', b.dataset.filterSuper===val));
-  renderFoods();
-}
 function setCatFilter(btn, val){
   currentCatFilter = val;
   document.querySelectorAll('[data-filter-cat]').forEach(b=>b.classList.toggle('active', b.dataset.filterCat===val));
@@ -1720,30 +1715,32 @@ function setCatFilter(btn, val){
 }
 function renderFoods(){
   const query = (document.getElementById('food-search')?.value||'').toLowerCase();
-  const filtered = FOODS_DB.filter(f=>{
-    if(currentSuperFilter!=='all' && f.supermarket!==currentSuperFilter) return false;
+  const allFoods = [...FOODS_DB, ...communityFoods];
+  const filtered = allFoods.filter(f=>{
     if(currentCatFilter!=='all' && f.category!==currentCatFilter) return false;
-    if(query && !f.name.toLowerCase().includes(query) && !f.brand.toLowerCase().includes(query)) return false;
+    if(query && !f.name.toLowerCase().includes(query)) return false;
     return true;
   });
-  const superColors = { mercadona:'sp-mercadona', lidl:'sp-lidl', carrefour:'sp-carrefour', alcampo:'sp-alcampo' };
-  const superNames = { mercadona:'Mercadona', lidl:'Lidl', carrefour:'Carrefour', alcampo:'Alcampo' };
+  // Update count label
+  const countEl = document.getElementById('foods-count-label');
+  if(countEl) countEl.textContent = `${allFoods.length} alimentos`;
+
   document.getElementById('foods-grid').innerHTML = filtered.length === 0
-    ? `<p style="color:var(--muted);font-size:.84rem;grid-column:1/-1;padding:20px 0">No se encontraron alimentos con esos filtros.</p>`
+    ? `<p style="color:var(--muted);font-size:.84rem;grid-column:1/-1;padding:20px 0">No se encontraron alimentos.</p>`
     : filtered.map(f=>`<div class="food-card">
       <div class="food-card-top">
         <div>
           <div class="food-name">${f.name}</div>
-          <div class="food-brand">${f.brand||'—'}</div>
+          ${f.brand ? `<div class="food-brand">${f.brand}</div>` : ''}
         </div>
-        <span class="sp-label sp-${f.supermarket}">${superNames[f.supermarket]}</span>
+        ${f.source==='community' ? `<span style="font-size:.56rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em">Comunidad</span>` : ''}
       </div>
       <div class="food-macros">
         <span class="food-macros-row"><span class="mv" style="color:var(--kcal)">${f.cal}</span> kcal &nbsp;·&nbsp; <span class="mv" style="color:var(--protein)">${f.pro}g</span> P &nbsp;·&nbsp; <span class="mv" style="color:var(--carbs)">${f.carb}g</span> C &nbsp;·&nbsp; <span class="mv" style="color:var(--fat)">${f.fat}g</span> G</span>
       </div>
       <div class="food-footer">
-        <div class="food-price">~<strong>${f.pricePerKg.toFixed(2)} €</strong>/kg</div>
         <span class="food-category-badge">${CAT_LABELS[f.category]||f.category}</span>
+        ${f.fiber ? `<span style="font-size:.68rem;color:var(--muted)">${f.fiber}g fibra</span>` : ''}
       </div>
     </div>`).join('');
 }
@@ -1881,6 +1878,78 @@ function copyShoppingList(){
 }
 
 /* ═══════════════════════════════════════
+   COMMUNITY FOODS
+═══════════════════════════════════════ */
+async function loadCommunityFoods(){
+  try {
+    const res = await fetch('/api/community-foods');
+    if(!res.ok) return;
+    const data = await res.json();
+    communityFoods = data.map(f=>({
+      id: 'cf_'+f.id,
+      name: f.name,
+      brand: f.brand||'',
+      category: f.category,
+      cal: +f.cal,
+      pro: +f.protein,
+      carb: +f.carbs,
+      fat: +f.fat,
+      fiber: +(f.fiber||0),
+      allergens: f.allergens||[],
+      source: 'community',
+      submittedBy: f.submitted_by||'anónimo'
+    }));
+    communityFoods.forEach(f => { FOOD_MAP[f.id] = f; });
+    renderFoods();
+  } catch(e) { console.warn('Community foods unavailable:', e); }
+}
+
+function openSubmitFoodModal(){
+  document.getElementById('modal-submit-food').classList.add('open');
+}
+
+async function submitCommunityFood(){
+  const name = document.getElementById('sf-name').value.trim();
+  const brand = document.getElementById('sf-brand').value.trim();
+  const category = document.getElementById('sf-category').value;
+  const cal = parseFloat(document.getElementById('sf-cal').value);
+  const protein = parseFloat(document.getElementById('sf-protein').value);
+  const carbs = parseFloat(document.getElementById('sf-carbs').value);
+  const fat = parseFloat(document.getElementById('sf-fat').value);
+  const fiber = parseFloat(document.getElementById('sf-fiber').value)||0;
+
+  if(!name || !category || isNaN(cal) || isNaN(protein) || isNaN(carbs) || isNaN(fat)){
+    toast('Rellena todos los campos obligatorios'); return;
+  }
+
+  const btn = document.getElementById('sf-submit-btn');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+
+  try {
+    const res = await fetch('/api/community-foods', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name, brand, category, cal, protein, carbs, fat, fiber,
+        submitted_by: (session.name||'Anónimo').split(' ')[0]
+      })
+    });
+    if(!res.ok) throw new Error(await res.text());
+    toast('¡Alimento añadido a la comunidad! Gracias 🎉');
+    closeModal('modal-submit-food');
+    // Reset form
+    ['sf-name','sf-brand','sf-cal','sf-protein','sf-carbs','sf-fat','sf-fiber'].forEach(id=>{
+      const el = document.getElementById(id); if(el) el.value='';
+    });
+    await loadCommunityFoods();
+  } catch(e) {
+    toast('Error al enviar. Inténtalo de nuevo.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Publicar alimento';
+  }
+}
+
+/* ═══════════════════════════════════════
    SETTINGS
 ═══════════════════════════════════════ */
 function syncSettings(){
@@ -1908,9 +1977,7 @@ function syncSettings(){
   document.getElementById('s-protein').value = p.proteinPct;
   document.getElementById('s-carbs').value = p.carbsPct;
   document.getElementById('s-fat').value = p.fatPct;
-  document.getElementById('s-budget').value = p.dailyBudget;
-  document.getElementById('s-supermarket').value = p.preferredSupermarket;
-  updateMacroPcts(); updateBudgetLabel();
+  updateMacroPcts();
   // Allergies
   document.querySelectorAll('.allergy-chip').forEach(c=>{
     c.classList.toggle('active', p.allergies.includes(c.dataset.allergy));
@@ -2026,8 +2093,6 @@ function saveProfile(){
     proteinPct: parseInt(document.getElementById('s-protein')?.value)||30,
     carbsPct: parseInt(document.getElementById('s-carbs')?.value)||45,
     fatPct: parseInt(document.getElementById('s-fat')?.value)||25,
-    dailyBudget: parseInt(document.getElementById('s-budget')?.value)||7,
-    preferredSupermarket: document.getElementById('s-supermarket')?.value||'any',
     allergies: [...document.querySelectorAll('.allergy-chip.active')].map(c=>c.dataset.allergy),
     weight: parseFloat(document.getElementById('s-weight')?.value)||75,
     height: parseFloat(document.getElementById('s-height')?.value)||175,
@@ -2115,8 +2180,6 @@ function resetToSeedPlan(){
 function openGenerateModal(){
   const p = getProfile();
   document.getElementById('gen-calories').value = p.targetCalories||2000;
-  document.getElementById('gen-budget').value = p.dailyBudget||7;
-  document.getElementById('gen-supermarket').value = p.preferredSupermarket||'any';
   document.getElementById('modal-generate').classList.add('open');
 }
 
@@ -2126,8 +2189,6 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 async function startGeneration(){
   const calories = parseInt(document.getElementById('gen-calories').value)||2000;
-  const budget = parseFloat(document.getElementById('gen-budget').value)||7;
-  const supermarket = document.getElementById('gen-supermarket').value;
   const macroPreset = document.getElementById('gen-macro-preset').value;
   const p = getProfile();
   let proteinPct, carbsPct, fatPct;
@@ -2166,7 +2227,7 @@ async function startGeneration(){
   activateStep(1); await sleep(500);
   activateStep(2);
 
-  const opts = { targetCalories:calories, proteinPct, carbsPct, fatPct, dailyBudget:budget, preferredSupermarket:supermarket, allergies:p.allergies||[], mealCount:selectedMealCount };
+  const opts = { targetCalories:calories, proteinPct, carbsPct, fatPct, allergies:p.allergies||[], mealCount:selectedMealCount };
 
   let plan;
   try {
@@ -2200,36 +2261,35 @@ async function startGeneration(){
 }
 
 async function generatePlanWithAI(opts){
-  const { targetCalories, proteinPct, carbsPct, fatPct, dailyBudget, preferredSupermarket, allergies, mealCount } = opts;
+  const { targetCalories, proteinPct, carbsPct, fatPct, allergies, mealCount } = opts;
   const protG = Math.round(targetCalories * proteinPct/100 / 4);
   const carbG = Math.round(targetCalories * carbsPct/100 / 4);
   const fatG  = Math.round(targetCalories * fatPct/100 / 9);
 
-  // Filter available foods
-  let foods = FOODS_DB.filter(f => {
-    if(preferredSupermarket !== 'any' && f.supermarket !== preferredSupermarket) return false;
-    if((allergies||[]).some(a => f.allergens.includes(a))) return false;
+  const allFoodsAI = [...FOODS_DB, ...communityFoods];
+  let foods = allFoodsAI.filter(f => {
+    if((allergies||[]).some(a => (f.allergens||[]).includes(a))) return false;
     return true;
   });
-  if(foods.length < 10) foods = FOODS_DB.filter(f => !(allergies||[]).some(a => f.allergens.includes(a)));
+  if(foods.length < 10) foods = allFoodsAI;
 
   const cfg = MEAL_CONFIGS[mealCount] || MEAL_CONFIGS[4];
   const slots = cfg.slots;
   const pcts  = cfg.pcts;
 
   const foodLines = foods.map(f =>
-    `${f.id}|${f.name}|${f.category}|${f.cal}kcal|P${f.pro}g C${f.carb}g G${f.fat}g|${f.pricePerKg}€/kg`
+    `${f.id}|${f.name}|${f.category}|${f.cal}kcal|P${f.pro}g C${f.carb}g G${f.fat}g`
   ).join('\n');
 
   const mealDesc = slots.map(s => `${s}:~${Math.round(targetCalories*pcts[s])}kcal`).join(', ');
 
   const prompt = `Genera un plan de dieta de 7 días en JSON. Responde ÚNICAMENTE con el JSON, sin explicación ni markdown.
 
-OBJETIVO: ${targetCalories}kcal/día | P:${protG}g C:${carbG}g G:${fatG}g | ${dailyBudget}€/día
+OBJETIVO: ${targetCalories}kcal/día | P:${protG}g C:${carbG}g G:${fatG}g
 TOMAS: ${mealDesc}
 ALERGIAS A EVITAR: ${allergies.length ? allergies.join(', ') : 'ninguna'}
 
-ALIMENTOS DISPONIBLES (id|nombre|categoría|kcal/100g|macros|precio):
+ALIMENTOS DISPONIBLES (id|nombre|categoría|kcal/100g|macros):
 ${foodLines}
 
 REGLAS:
@@ -2240,7 +2300,6 @@ REGLAS:
 - Merienda/almuerzo: fruta o lácteo
 - Varía los alimentos: no repitas la misma proteína más de 2 días seguidos
 - Ajusta gramos para alcanzar las kcal de cada toma. Rangos: proteína 100-250g, carbo cocido 150-300g, verdura 100-250g, aceite 10-20g, frutos secos 20-30g, lácteo 100-300g, fruta 100-200g
-- El coste diario no debe superar ${dailyBudget}€
 
 FORMATO (devuelve exactamente esto, sin nada más):
 {"days":[{"dayName":"Lunes","meals":{"${slots[0]}":[{"foodId":"ID","grams":100}]${slots.length>1?`,"${slots[1]}":[{"foodId":"ID","grams":100}]`:''}}},...hasta Domingo]}`;
@@ -2277,25 +2336,24 @@ FORMATO (devuelve exactamente esto, sin nada más):
   return {
     id: 'plan_'+Date.now(), createdAt: new Date().toISOString(),
     targetCalories, proteinPct, carbsPct, fatPct,
-    dailyBudget, preferredSupermarket, mealCount: mealCount||4,
-    days: parsed.days
+    mealCount: mealCount||4, days: parsed.days
   };
 }
 
 function generatePlan(opts){
-  const { targetCalories, proteinPct, carbsPct, fatPct, dailyBudget, preferredSupermarket, allergies, mealCount } = opts;
+  const { targetCalories, proteinPct, carbsPct, fatPct, allergies, mealCount } = opts;
   const cfg = MEAL_CONFIGS[mealCount] || MEAL_CONFIGS[4];
+  const allFoods = [...FOODS_DB, ...communityFoods];
 
   // Filter available foods
-  let pool = FOODS_DB.filter(f=>{
-    if(preferredSupermarket!=='any' && f.supermarket!==preferredSupermarket) return false;
-    if((allergies||[]).some(a=>f.allergens.includes(a))) return false;
+  let pool = allFoods.filter(f=>{
+    if((allergies||[]).some(a=>(f.allergens||[]).includes(a))) return false;
     return true;
   });
   // Fallback to all if not enough
   const byCat = cat => {
     const r = pool.filter(f=>f.category===cat);
-    return r.length>0 ? r : FOODS_DB.filter(f=>f.category===cat && !(allergies||[]).some(a=>f.allergens.includes(a)));
+    return r.length>0 ? r : allFoods.filter(f=>f.category===cat && !(allergies||[]).some(a=>(f.allergens||[]).includes(a)));
   };
   const proteins   = byCat('protein');
   const carbsList  = byCat('carbs');
@@ -2383,7 +2441,7 @@ function generatePlan(opts){
     return { dayName, meals };
   });
 
-  return { id:'plan_'+Date.now(), createdAt:new Date().toISOString(), targetCalories, proteinPct, carbsPct, fatPct, dailyBudget, preferredSupermarket, mealCount:mealCount||4, days:planDays };
+  return { id:'plan_'+Date.now(), createdAt:new Date().toISOString(), targetCalories, proteinPct, carbsPct, fatPct, mealCount:mealCount||4, days:planDays };
 }
 
 /* ═══════════════════════════════════════
@@ -2412,6 +2470,7 @@ html.setAttribute('data-theme', savedTheme);
 })();
 renderDashboard();
 renderFoods();
+loadCommunityFoods();
 
 /* ═══════════════════════════════════════
    ASSISTANT IA
