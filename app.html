@@ -18,7 +18,7 @@
       --surface2:   #1a1a1c;
       --surface3:   #252528;
       --text:       #f4f4f5;
-      --muted:      #71717a;
+      --muted:      #a1a1aa;
       --border:     rgba(255,255,255,.055);
       --border-md:  rgba(255,255,255,.10);
       --radius:     10px;
@@ -82,9 +82,7 @@
     .sidebar-logo-text { flex:1; min-width:0; overflow:hidden }
     .app-logo {
       font-size:1.2rem; font-weight:800; letter-spacing:-.06em;
-      background:var(--grad); -webkit-background-clip:text;
-      -webkit-text-fill-color:transparent; background-clip:text;
-      display:block;
+      color:var(--text); display:block;
     }
     .ws-plan {
       font-size:.59rem; color:var(--muted); margin-top:2px;
@@ -110,7 +108,7 @@
     .nav-item.active::before {
       content:''; position:absolute; left:0; top:50%;
       transform:translateY(-50%);
-      width:2px; height:14px; background:var(--accent);
+      width:2px; height:14px; background:var(--text);
       border-radius:0 2px 2px 0;
     }
     .nav-item-icon {
@@ -118,7 +116,7 @@
       width:15px; flex-shrink:0; color:var(--muted); transition:color .12s;
     }
     .nav-item:hover .nav-item-icon { color:var(--text) }
-    .nav-item.active .nav-item-icon { color:var(--accent) }
+    .nav-item.active .nav-item-icon { color:var(--text) }
     .sidebar-footer {
       padding:12px 14px; border-top:1px solid var(--border);
       display:flex; align-items:center; gap:10px; flex-shrink:0;
@@ -338,6 +336,36 @@
       font-size:.58rem; color:var(--muted); background:var(--surface3);
       border-radius:4px; padding:2px 7px; border:1px solid var(--border);
       font-weight:700; text-transform:uppercase; letter-spacing:.06em;
+    }
+
+    /* ── SHOPPING ADD ROW ── */
+    .shopping-add-row {
+      display:flex; gap:8px; margin-bottom:20px; align-items:center;
+    }
+    .shopping-add-input {
+      flex:1; background:var(--surface2); border:1px solid var(--border);
+      border-radius:8px; padding:9px 13px; color:var(--text);
+      font-family:inherit; font-size:.84rem; outline:none; transition:border-color .15s;
+    }
+    .shopping-add-input:focus { border-color:var(--border-md) }
+    .shopping-add-input::placeholder { color:var(--muted) }
+    .shopping-add-qty {
+      width:110px; background:var(--surface2); border:1px solid var(--border);
+      border-radius:8px; padding:9px 13px; color:var(--text);
+      font-family:inherit; font-size:.84rem; outline:none; transition:border-color .15s;
+    }
+    .shopping-add-qty:focus { border-color:var(--border-md) }
+    .shopping-add-qty::placeholder { color:var(--muted) }
+    .shop-delete-btn {
+      background:none; border:none; color:var(--muted); cursor:pointer;
+      font-size:.9rem; padding:4px 6px; border-radius:6px; transition:color .12s;
+      line-height:1; flex-shrink:0;
+    }
+    .shop-delete-btn:hover { color:#ef4444 }
+    .manual-section-label {
+      font-size:.63rem; font-weight:700; color:var(--muted);
+      text-transform:uppercase; letter-spacing:.13em; margin-bottom:10px;
+      display:flex; align-items:center; justify-content:space-between;
     }
 
     /* ── SHOPPING LIST ── */
@@ -931,9 +959,18 @@
       <div class="page-header">
         <div>
           <h1 class="page-title">Lista de Compra</h1>
-          <p class="page-sub">Generada automáticamente desde tu plan activo</p>
+          <p class="page-sub">Añade artículos manualmente o genera desde tu plan semanal</p>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="copyShoppingList()">Copiar lista</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="generateShoppingFromPlan()">↻ Generar desde mi plan</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyShoppingList()">Copiar lista</button>
+          <button class="btn btn-danger btn-sm" onclick="clearShoppingList()">Vaciar</button>
+        </div>
+      </div>
+      <div class="shopping-add-row">
+        <input class="shopping-add-input" id="shop-item-name" placeholder="Nombre del artículo…" onkeydown="shopAddKeydown(event)"/>
+        <input class="shopping-add-qty" id="shop-item-qty" placeholder="Cantidad" onkeydown="shopAddKeydown(event)"/>
+        <button class="btn btn-primary btn-sm" onclick="addShoppingItem()">+ Añadir</button>
       </div>
       <div id="shopping-content"></div>
     </div>
@@ -1062,21 +1099,21 @@
             <div class="settings-label">% Proteína</div>
             <div class="settings-sub" id="s-protein-label">30% → 150g</div>
           </div>
-          <input type="range" class="settings-slider" id="s-protein" min="10" max="50" value="30" oninput="updateMacroPcts()"/>
+          <input type="range" class="settings-slider" id="s-protein" min="10" max="80" value="30" oninput="adjustMacros('protein')"/>
         </div>
         <div class="settings-row">
           <div>
             <div class="settings-label">% Carbohidratos</div>
             <div class="settings-sub" id="s-carbs-label">45% → 225g</div>
           </div>
-          <input type="range" class="settings-slider" id="s-carbs" min="10" max="65" value="45" oninput="updateMacroPcts()"/>
+          <input type="range" class="settings-slider" id="s-carbs" min="10" max="80" value="45" oninput="adjustMacros('carbs')"/>
         </div>
         <div class="settings-row">
           <div>
             <div class="settings-label">% Grasas</div>
             <div class="settings-sub" id="s-fat-label">25% → 56g</div>
           </div>
-          <input type="range" class="settings-slider" id="s-fat" min="10" max="50" value="25" oninput="updateMacroPcts()"/>
+          <input type="range" class="settings-slider" id="s-fat" min="10" max="80" value="25" oninput="adjustMacros('fat')"/>
         </div>
       </div>
 
@@ -1535,7 +1572,6 @@ function renderDashboard(){
       const foods = items.map(i=>FOOD_MAP[i.foodId]?.name||'').filter(Boolean).join(' · ');
       return `<div class="meal-row" id="mrow-${mealType}">
         <button class="meal-check ${isDone?'done':''}" onclick="toggleMealCheck('${mealType}','${checkedKey}')">${isDone?'✓':''}</button>
-        <div class="meal-icon" style="font-size:.7rem;font-weight:700;color:var(--muted)">${MEAL_LABELS[mealType].slice(0,2).toUpperCase()}</div>
         <div class="meal-info">
           <div class="meal-name">${MEAL_LABELS[mealType]}</div>
           <div class="meal-foods">${foods}</div>
@@ -1715,19 +1751,106 @@ function renderFoods(){
 /* ═══════════════════════════════════════
    SHOPPING LIST
 ═══════════════════════════════════════ */
+/* ── Manual shopping list helpers ── */
+const SHOP_KEY = 'fd_shop_manual_v2';
+function loadShopItems(){ return JSON.parse(localStorage.getItem(SHOP_KEY)||'[]'); }
+function saveShopItems(items){ localStorage.setItem(SHOP_KEY, JSON.stringify(items)); }
+
 function renderShopping(){
-  const plan = loadPlan();
+  const items = loadShopItems();
   const content = document.getElementById('shopping-content');
-  if(!plan){
+  const done = items.filter(i=>i.checked).length;
+
+  if(items.length === 0){
     content.innerHTML = `<div class="empty-state">
-      <div class="empty-title">Sin plan activo</div>
-      <div class="empty-desc">Genera un plan primero para obtener tu lista de la compra automática.</div>
-      <button class="btn btn-primary" onclick="showView('plan')">Ir a Mi Plan</button>
+      <div class="empty-title">Lista vacía</div>
+      <div class="empty-desc">Añade artículos manualmente arriba, o pulsa <strong>Generar desde mi plan</strong> para importar la lista semanal automáticamente.</div>
     </div>`;
     return;
   }
 
-  // Aggregate all ingredients from the 7-day plan
+  const pending = items.filter(i=>!i.checked);
+  const checked = items.filter(i=>i.checked);
+
+  const renderItem = (item) => `
+    <div class="shopping-item ${item.checked?'checked':''}" id="si-${item.id}">
+      <button class="shop-check ${item.checked?'done':''}" onclick="toggleManualShopCheck('${item.id}')">${item.checked?'✓':''}</button>
+      <div style="flex:1;min-width:0">
+        <div class="shopping-item-name">${item.name}</div>
+        ${item.qty ? `<div class="shopping-item-brand">${item.qty}</div>` : ''}
+      </div>
+      <button class="shop-delete-btn" onclick="deleteShoppingItem('${item.id}')" title="Eliminar">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M2 2l9 9M11 2l-9 9"/></svg>
+      </button>
+    </div>`;
+
+  content.innerHTML = `
+    <div class="shopping-summary" style="margin-bottom:20px">
+      <div class="shopping-stat"><div class="shopping-stat-val">${items.length}</div><div class="shopping-stat-label">artículos</div></div>
+      <div class="shopping-stat"><div class="shopping-stat-val" style="color:var(--kcal)">${done}</div><div class="shopping-stat-label">completados</div></div>
+      <div class="shopping-stat"><div class="shopping-stat-val">${items.length - done}</div><div class="shopping-stat-label">pendientes</div></div>
+    </div>
+    ${pending.length ? `
+      <div class="manual-section-label">
+        <span>Pendientes</span>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px">
+        ${pending.map(renderItem).join('')}
+      </div>` : ''}
+    ${checked.length ? `
+      <div class="manual-section-label">
+        <span>Completados · ${done}</span>
+        <button onclick="clearCheckedItems()" style="font-size:.65rem;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline">Limpiar</button>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+        ${checked.map(renderItem).join('')}
+      </div>` : ''}`;
+}
+
+function addShoppingItem(){
+  const nameEl = document.getElementById('shop-item-name');
+  const qtyEl  = document.getElementById('shop-item-qty');
+  const name = nameEl.value.trim();
+  if(!name){ nameEl.focus(); return; }
+  const items = loadShopItems();
+  items.push({ id: 'si_'+Date.now(), name, qty: qtyEl.value.trim(), checked: false });
+  saveShopItems(items);
+  nameEl.value = ''; qtyEl.value = '';
+  nameEl.focus();
+  renderShopping();
+}
+
+function shopAddKeydown(e){
+  if(e.key === 'Enter') addShoppingItem();
+}
+
+function toggleManualShopCheck(id){
+  const items = loadShopItems();
+  const item = items.find(i=>i.id===id);
+  if(item) item.checked = !item.checked;
+  saveShopItems(items);
+  renderShopping();
+}
+
+function deleteShoppingItem(id){
+  saveShopItems(loadShopItems().filter(i=>i.id!==id));
+  renderShopping();
+}
+
+function clearCheckedItems(){
+  saveShopItems(loadShopItems().filter(i=>!i.checked));
+  renderShopping();
+}
+
+function clearShoppingList(){
+  if(!confirm('¿Vaciar toda la lista de la compra?')) return;
+  saveShopItems([]);
+  renderShopping();
+}
+
+function generateShoppingFromPlan(){
+  const plan = loadPlan();
+  if(!plan){ toast('No tienes ningún plan activo. Genera uno primero.'); return; }
   const aggregated = {};
   plan.days.forEach(day=>{
     MEAL_ORDER.forEach(mealType=>{
@@ -1737,105 +1860,23 @@ function renderShopping(){
       });
     });
   });
-
-  // Group by supermarket
-  const bySuper = {};
-  let totalCost = 0;
-  let totalItems = 0;
+  const existing = loadShopItems();
+  const newItems = [];
   Object.entries(aggregated).forEach(([foodId, totalGrams])=>{
     const f = FOOD_MAP[foodId]; if(!f) return;
-    if(!bySuper[f.supermarket]) bySuper[f.supermarket] = [];
-    const costItem = f.pricePerKg * totalGrams/1000;
-    totalCost += costItem; totalItems++;
-    bySuper[f.supermarket].push({ food:f, grams:Math.round(totalGrams), cost:costItem });
+    const amountStr = totalGrams >= 1000 ? `${(totalGrams/1000).toFixed(1)} kg` : `${Math.round(totalGrams)} g`;
+    newItems.push({ id:'si_'+Date.now()+'_'+foodId, name:f.name, qty:amountStr, checked:false });
   });
-
-  const superNames = { mercadona:'Mercadona', lidl:'Lidl', carrefour:'Carrefour', alcampo:'Alcampo' };
-  const superColors = { mercadona:'var(--text)', lidl:'var(--text)', carrefour:'var(--text)', alcampo:'var(--text)' };
-  const checkedKey = 'fd_shop_checked_'+plan.createdAt;
-  const shopChecked = JSON.parse(localStorage.getItem(checkedKey)||'{}');
-
-  content.innerHTML = `
-    <div class="shopping-summary">
-      <div class="shopping-stat"><div class="shopping-stat-val">${totalItems}</div><div class="shopping-stat-label">productos</div></div>
-      <div class="shopping-stat"><div class="shopping-stat-val" style="color:var(--kcal)">${totalCost.toFixed(2)} €</div><div class="shopping-stat-label">coste estimado semanal</div></div>
-      <div class="shopping-stat"><div class="shopping-stat-val">${(totalCost/7).toFixed(2)} €</div><div class="shopping-stat-label">coste diario estimado</div></div>
-    </div>
-    ${Object.entries(bySuper).map(([super_, items])=>{
-      const sTotal = items.reduce((s,i)=>s+i.cost, 0);
-      const sId = 'ss-'+super_;
-      return `<div class="supermarket-section">
-        <div class="supermarket-section-header open" id="ssh-${sId}" onclick="toggleSuperSection('${sId}')">
-          <div class="ss-header-left">
-            <span class="ss-name">${superNames[super_]||super_}</span>
-            <span class="ss-count">${items.length} productos</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px">
-            <span class="ss-total" style="color:${superColors[super_]||'var(--kcal)'}">${sTotal.toFixed(2)} €</span>
-            <span class="ss-chevron">▼</span>
-          </div>
-        </div>
-        <div class="shopping-items open" id="${sId}">
-          ${items.map(({food, grams, cost})=>{
-            const ck = food.id;
-            const isDone = shopChecked[ck];
-            const amountStr = grams >= 1000 ? `${(grams/1000).toFixed(1)} kg` : `${grams} g`;
-            return `<div class="shopping-item ${isDone?'checked':''}" id="si-${food.id}">
-              <button class="shop-check ${isDone?'done':''}" onclick="toggleShopCheck('${food.id}','${checkedKey}')">${isDone?'✓':''}</button>
-              <div style="flex:1;min-width:0">
-                <div class="shopping-item-name">${food.name}</div>
-                <div class="shopping-item-brand">${food.brand||'—'}</div>
-              </div>
-              <div class="shopping-item-amount">${amountStr}</div>
-              <div class="shopping-item-price">${cost.toFixed(2)} €</div>
-            </div>`;
-          }).join('')}
-        </div>
-      </div>`;
-    }).join('')}`;
-}
-
-function toggleSuperSection(id){
-  const el = document.getElementById(id);
-  const header = document.getElementById('ssh-'+id);
-  el.classList.toggle('open');
-  header.classList.toggle('open');
-}
-
-function toggleShopCheck(foodId, key){
-  const checked = JSON.parse(localStorage.getItem(key)||'{}');
-  checked[foodId] = !checked[foodId];
-  localStorage.setItem(key, JSON.stringify(checked));
-  const item = document.getElementById('si-'+foodId);
-  const btn = item?.querySelector('.shop-check');
-  if(item) item.classList.toggle('checked', !!checked[foodId]);
-  if(btn){ btn.classList.toggle('done', !!checked[foodId]); btn.textContent = checked[foodId]?'✓':'' }
+  saveShopItems([...existing, ...newItems]);
+  renderShopping();
+  toast(`${newItems.length} artículos añadidos desde tu plan semanal`);
 }
 
 function copyShoppingList(){
-  const plan = loadPlan(); if(!plan){ toast('Sin plan activo'); return }
-  const aggregated = {};
-  plan.days.forEach(day=>{
-    MEAL_ORDER.forEach(m=>{
-      (day.meals[m]||[]).forEach(item=>{
-        if(!aggregated[item.foodId]) aggregated[item.foodId]=0;
-        aggregated[item.foodId]+=item.grams;
-      });
-    });
-  });
-  const bySuper = {};
-  Object.entries(aggregated).forEach(([fid, g])=>{
-    const f=FOOD_MAP[fid]; if(!f) return;
-    if(!bySuper[f.supermarket]) bySuper[f.supermarket]=[];
-    bySuper[f.supermarket].push({ name:f.name, grams:Math.round(g) });
-  });
-  const superNames = { mercadona:'MERCADONA', lidl:'LIDL', carrefour:'CARREFOUR', alcampo:'ALCAMPO' };
+  const items = loadShopItems();
+  if(!items.length){ toast('La lista está vacía'); return; }
   let text = 'LISTA DE LA COMPRA — NUTRIA\n\n';
-  Object.entries(bySuper).forEach(([s, items])=>{
-    text += `── ${superNames[s]||s} ──\n`;
-    items.forEach(i=>{ text += `• ${i.name} (${i.grams>=1000?(i.grams/1000).toFixed(1)+'kg':i.grams+'g'})\n` });
-    text += '\n';
-  });
+  items.forEach(i=>{ text += `${i.checked?'[✓]':'[ ]'} ${i.name}${i.qty?' — '+i.qty:''}\n`; });
   navigator.clipboard?.writeText(text).then(()=>toast('Lista copiada al portapapeles')).catch(()=>toast('No se pudo copiar'));
 }
 
@@ -1927,6 +1968,40 @@ function applyRecommendedCalories(){
   const calInput = document.getElementById('s-calories');
   if(calInput){ calInput.value = rec; updateMacroPcts(); }
   toast(`Calorías actualizadas a ${rec} kcal`);
+}
+
+function adjustMacros(changed){
+  const pEl = document.getElementById('s-protein');
+  const cEl = document.getElementById('s-carbs');
+  const fEl = document.getElementById('s-fat');
+  const MIN = 10;
+  let p = parseInt(pEl.value)||30;
+  let c = parseInt(cEl.value)||45;
+  let f = parseInt(fEl.value)||25;
+
+  // The changed slider keeps its value; redistribute remaining 100% between the other two
+  const fixed = changed==='protein' ? p : changed==='carbs' ? c : f;
+  const remaining = Math.max(MIN*2, 100 - fixed);
+
+  if(changed==='protein'){
+    const total = c + f || 1;
+    c = Math.max(MIN, Math.round(remaining * c / total));
+    f = Math.max(MIN, remaining - c);
+    if(c + f !== remaining){ c = remaining - f; }
+  } else if(changed==='carbs'){
+    const total = p + f || 1;
+    p = Math.max(MIN, Math.round(remaining * p / total));
+    f = Math.max(MIN, remaining - p);
+    if(p + f !== remaining){ p = remaining - f; }
+  } else {
+    const total = p + c || 1;
+    p = Math.max(MIN, Math.round(remaining * p / total));
+    c = Math.max(MIN, remaining - p);
+    if(p + c !== remaining){ p = remaining - c; }
+  }
+
+  pEl.value = p; cEl.value = c; fEl.value = f;
+  updateMacroPcts();
 }
 
 function updateMacroPcts(){
